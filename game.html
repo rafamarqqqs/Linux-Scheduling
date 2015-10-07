@@ -9,6 +9,7 @@
 	    <!-- Bootstrap -->
 	    <link href="css/bootstrap.min.css" rel="stylesheet">
 	    <link href="css/bootstrap.css" rel="stylesheet">
+	    <link href="css/reaCSS.css" rel="stylesheet">
 	</head>
 <body>
 
@@ -23,25 +24,11 @@
 <div class="container">
 	<div class="row">
 
-	  	<!--BLOCKED AREA-->
-		<div class="col-sm-4 col-md-4">
-	    	<div class="thumbnail">
-	      		<div class="caption">
-	        		<p class="text-center lead bg-danger">Blocked</p>
-	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
-	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
-	        		<div id="blocked">
-
-	        		</div>
-	      		</div>
-	    	</div>
-	  	</div>
-
 	  	<!--EXECUTING AREA-->
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead bg-info">Executing</p>
+	        		<p class="text-center lead execColor">Executing</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="exec">
@@ -55,13 +42,43 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div id="readyBlock" class="caption">
-	        		<p class="text-center lead bg-success">Ready</p>
+	        		<p class="text-center lead readyColor">Ready</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="ready">
 	        			
 	        		</div>
+	      		</div>
+	    	</div>
+	  	</div>
 
+	  	<div class="col-sm-4 col-md-4">
+	    	<div class="thumbnail">
+	      		<div id="expiredBlock" class="caption">
+	        		<p class="text-center lead expiredColor">Expired</p>
+	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
+	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
+	        		<div id="expired">
+	        			
+
+
+	        		</div>
+	      		</div>
+	    	</div>
+	  	</div>
+	</div>
+
+	<div class="row">
+		<!--BLOCKED AREA-->
+		<div class="col-sm-4 col-md-4">
+	    	<div class="thumbnail">
+	      		<div class="caption">
+	        		<p class="text-center lead blockedColor">Blocked</p>
+	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
+	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
+	        		<div id="blocked">
+
+	        		</div>
 	      		</div>
 	    	</div>
 	  	</div>
