@@ -36,12 +36,24 @@
 	        		</div>
 	      		</div>
 	    	</div>
+
+	    <!--BLOCKED AREA-->	
+	    	<div class="thumbnail">
+	      		<div class="caption">
+	        		<p class="text-center lead blockedColor">Blocked</p>
+	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
+	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
+	        		<div id="blocked">
+
+	        		</div>
+	      		</div>
+	    	</div>
 	  	</div>
 
 	  	<!--READY AREA-->
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
-	      		<div id="readyBlock" class="caption">
+	      		<div class="caption">
 	        		<p class="text-center lead readyColor">Ready</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
@@ -52,9 +64,10 @@
 	    	</div>
 	  	</div>
 
+	  	<!--EXPIRED AREA-->
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
-	      		<div id="expiredBlock" class="caption">
+	      		<div class="caption">
 	        		<p class="text-center lead expiredColor">Expired</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
@@ -67,23 +80,48 @@
 	    	</div>
 	  	</div>
 	</div>
-
-	<div class="row">
-		<!--BLOCKED AREA-->
-		<div class="col-sm-4 col-md-4">
-	    	<div class="thumbnail">
-	      		<div class="caption">
-	        		<p class="text-center lead blockedColor">Blocked</p>
-	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
-	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
-	        		<div id="blocked">
-
-	        		</div>
-	      		</div>
-	    	</div>
-	  	</div>
-	</div>
 </div>
+
+<div class="btn-group" id="nextStepButton" data-toggle="buttons">
+	<button type="button" onclick="checkExecution()" class="btn btn-primary btn-lg">moveFromExecution</button>
+	<button type="button" onclick="checkBlocked()" class="btn btn-primary btn-lg">moveFromBlocked</button>
+	<button type="button" onclick="checkReady()" class="btn btn-primary btn-lg">moveFromReady</button>
+	<button type="button" onclick="checkExpired()" class="btn btn-primary btn-lg">moveFromExpired</button>
+	<button type="button" onclick="mainAlgorithm()" class="btn btn-primary btn-lg">mainAlgorithm</button>
+</div>
+
+<button type="button" class="btn btn-primary btn-lg" id="statisticsButton" data-toggle="modal" data-target="#myModal">
+  Statistics
+</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Statistics</h4>
+      </div>
+      <div class="modal-body">
+        Tempo ocioso da CPU: blablabla<br>
+        BLA<br>
+        BLA<br>
+        BLA<br>
+        B<br>
+        L<br>
+        A<br>
+        .<br>
+        .<br>
+        .<br>
+        BLABLA<br>
+        BLABLABLA<br>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

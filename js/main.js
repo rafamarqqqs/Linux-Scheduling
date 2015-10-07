@@ -2,6 +2,13 @@ var execSize;
 var blockedSize;
 var readySize;
 var processes = [];
+var quantum = 10;
+
+
+//FAZER BOTAO DE ESTATISTICAS DO SISTEMA !!!!!!!!!!!!!!!!!!!! (tipo tempo ocioso da cpu e tal)
+
+
+
 
 //objeto para guardar os dados dos processos
 var Process = {
@@ -9,15 +16,17 @@ var Process = {
 	priority:-1,
 	time:-1,
 	io: -1,
+	state: -1,
 };
 
-function process(id, priority, time, io){
+function process(id, priority, time, io, state){
 	Process = {};
 	processes[processes.length] = Process;
 	processes[processes.length - 1]["id"] = id;
 	processes[processes.length - 1]["priority"] = priority;
 	processes[processes.length - 1]["time"] = time;
 	processes[processes.length - 1]["io"] = io;
+	processes[processes.length - 1]["state"] = state;
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)
@@ -25,57 +34,92 @@ function getHTMLText(block, n){
 	return  "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
 		    "<div class=\"list-group-item  processBg\">" + 
 			"<span class=\"label label-primary\">ID: " + processes[n]["id"] + "   </span>" +
-			"<span class=\"label label-primary\">Time: " + processes[n]["time"] + "</span></div>" +
-		    "<div class=\"list-group-item  processBg\">" +
+			"<span class=\"label label-primary\">Time: " + processes[n]["time"] + "</span>" +
 			"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
-			"<span class=\"label label-danger\">I/O: " + processes[n]["io"] + "   </span></div></div>";
+			"<span class=\"label label-danger\">I/O: " + processes[n]["io"] + "   </span></div>";
+}
+
+function mainAlgorithm(){
+	var expiredHTML = document.getElementById('expired').innerHTML;
+
+	$("#expired").slideUp("slow", function() {
+		$(expiredHTML).remove();
+	});
+
+	setTimeout(function() {
+		$(expiredHTML).appendTo('#ready').hide().slideDown("slow");
+	}, 1000);
 }
 
 //apaga um bloco de uma regiao
-function eraseBlock(btn){
-	var block = btn.attr('id');//pega a id do botao que foi clicado
-	var name = block.split(",");//baseado na id do botao clicado, acha a id do grupo de botoes
-		
-	$("#" + name[0]).slideUp("fast", function() {
+function removeProcess(p){
+	$(p).slideUp("fast", function() {
 		$(this).remove();
 	});
-
-	decrementBlock(block);
-
-	return block;
 }
 
-function decrementBlock(id){
-	aux = id.split("_");
-
-	if(aux[0] === "processB")
-		blockedSize--;
-	else if(aux[0] === "processE")
-		execSize--;
-	else if(aux[0] === "processR")
-		readySize--;
+function executeProcess(p){
+	p["state"] = "exec";
+	var aux = getHTMLText("E", p["id"]);
+	$(aux).appendTo('#exec').hide().slideDown("fast");
 }
 
-$(document).ready(function() {
+function blockProcess(p){
+	p["time"] -= quantum;
+	p["io"] = "true";
+	p["state"] = "blocked";
+	var aux = getHTMLText("B", p["id"]);
+	$(aux).appendTo('#blocked').hide().slideDown("fast");
+}
+
+function makeProcessReady(p){
+	p["state"] = "ready";	
+	var aux = getHTMLText("R", p["id"]);
+	$(aux).appendTo('#ready').hide().slideDown("fast");
+}
+
+function checkExecution(){
 	var p;
-	execSize = 1;
-	blockedSize = 1;
-	readySize = 1;
 
-	process(0, 1, 100, "false");
-	process(1, 2, 200, "true");
-	process(2, 3, 300, "false");
+	for (var i = processes.length - 1; i >= 0; i--) {
+		if(processes[i]["state"] == "exec"){
+			p = processes[i];
+		}
+	};	
 
-	p = getHTMLText("E", 0);
-	$(p).appendTo('#exec');
-	p = getHTMLText("B", 1);
-	$(p).appendTo('#blocked');
-	p = getHTMLText("R", 2);
-	$(p).appendTo('#ready');
+	removeProcess("#E_" + p["id"]);
+	blockProcess(p);
+}
 
-});
+function checkBlocked(){
+	var p;
 
-var ONE_FRAME_TIME = 1000/60;
+	for (var i = processes.length - 1; i >= 0; i--) {
+		if(processes[i]["state"] == "blocked"){
+			p = processes[i];
+		}
+	};	
+
+	removeProcess("#B_" + p["id"]);
+	p["io"] = "false";
+
+	makeProcessReady(p);
+}
+
+function checkReady(){
+	var p;
+
+	for (var i = 0; i < processes.length; i++) {
+		if(processes[i]["state"] == "ready"){
+			p = processes[i];
+		}
+	};	
+
+	removeProcess("#R_" + p["id"]);
+	executeProcess(p);	
+}
+
+var ONE_FRAME_TIME = 1000;
 var i = 0;
 
 var mainloop = function() {
@@ -85,39 +129,22 @@ setInterval(mainloop, ONE_FRAME_TIME);
 
 //fazer função de verificar se o bloco esta na mesma regiao antes de retirar e por de novo
 
-$(function() {
-	$(document).on('click', '.blockBtn', function() {
-		var block = eraseBlock($(this));
 
-		blockedSize++;
+$(document).ready(function() {
+	var p;
+	execSize = 1;
+	blockedSize = 1;
+	readySize = 1;
 
-		var p = getHTMLText("B", blockedSize);
+	process(0, 1, 100, "false", "exec");
+	process(1, 2, 200, "true", "blocked");
+	process(2, 3, 300, "false", "ready");
 
-		$(p).appendTo('#blocked').hide().slideDown("fast");
-	});
-});
+	p = getHTMLText("E", 0);
+	$(p).appendTo('#exec');
+	p = getHTMLText("B", 1);
+	$(p).appendTo('#blocked');
+	p = getHTMLText("R", 2);
+	$(p).appendTo('#ready');
 
-$(function() {
-	$(document).on('click', '.execBtn', function() {
-		var block = eraseBlock($(this));
-
-		execSize++;
-		
-		var p = getHTMLText("E", execSize);
-
-		$(p).appendTo('#exec').hide().slideDown("fast");
-	});
-});
-
-$(function() {
-	$(document).on('click', '.readyBtn', function() {
-		var block = eraseBlock($(this));
-
-		readySize++;
-
-		var p = getHTMLText("R", readySize);
-
-		$(p).appendTo('#ready').hide().slideDown("fast");
-
-	});
 });

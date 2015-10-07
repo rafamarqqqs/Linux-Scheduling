@@ -23,8 +23,24 @@ body {
 }
 
 .processBg {
-	border-radius: 10px;
+	border-radius: 7px;
 	background-color: #DADFE0;
-	padding-left: 10px;
-	padding-right: 10px;
+	text-align: center;
+}
+
+.processBg span {
+	margin: 5px;
+}
+
+#statisticsButton {
+    position: fixed;
+	bottom: 30px;
+	margin-left: 80%;
+}
+
+#nextStepButton {
+    position: fixed;
+	bottom: 30px;
+	margin-left:auto;
+	margin-right:auto;
 }
