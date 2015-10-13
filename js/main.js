@@ -41,14 +41,20 @@ function getHTMLText(block, n){
 
 function mainAlgorithm(){
 	var expiredHTML = document.getElementById('expired').innerHTML;
+	var expired = document.getElementById('expired');
 
-	$("#expired").slideUp("slow", function() {
-		$(expiredHTML).remove();
+	$(expired).slideUp("slow", function() {
+		$(expired).remove();
 	});
 
-	setTimeout(function() {
-		$(expiredHTML).appendTo('#ready').hide().slideDown("slow");
-	}, 1000);
+	$(expiredHTML).appendTo("#ready").hide().slideDown("slow");
+
+	for(var i = 0; i < processes.length; i++){
+		if(processes[i]["state"] == "expired"){
+			processes[i]["state"] = "ready";
+			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
+		}
+	}
 }
 
 //apaga um bloco de uma regiao
@@ -139,6 +145,7 @@ $(document).ready(function() {
 	process(0, 1, 100, "false", "exec");
 	process(1, 2, 200, "true", "blocked");
 	process(2, 3, 300, "false", "ready");
+	process(3, 3, 300, "false", "expired");
 
 	p = getHTMLText("E", 0);
 	$(p).appendTo('#exec');
@@ -146,5 +153,7 @@ $(document).ready(function() {
 	$(p).appendTo('#blocked');
 	p = getHTMLText("R", 2);
 	$(p).appendTo('#ready');
+	p = getHTMLText("Ex", 3);
+	$(p).appendTo('#expired');
 
 });
