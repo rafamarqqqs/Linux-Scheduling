@@ -40,8 +40,9 @@ function process(id, priority, time, io, status, quantum, ioTime){
 	processes[processes.length - 1]["status"] = status;
 }
 
-function setInfo(info){
-	document.getElementById('info').innerHTML = "<div class=\"alert alert-info\" role=\"alert\">" + info + "</div>";
+function setInfo(info, color){
+	document.getElementById('info').innerHTML = "<div class=\"alert alert-" + color + "\" role=\"alert\">" + info + "</div>";
+	$("#modalTextArea").append("<span class=\"label label-" + color + "\">" + info + "</span><br>");
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)
@@ -57,7 +58,7 @@ function getHTMLText(block, n){
 }
 
 function mainAlgorithm(){
-	setInfo("Swapping vectors...");
+	setInfo("Swapping vectors...", "warning");
 
 	var expiredHTML = document.getElementById('expired').innerHTML;
 	var expired = document.getElementById('expired');
@@ -116,33 +117,33 @@ function checkExecution(){
 	executingProcess["quantumUsed"] += 10;
 	executingProcess["time"] -= processingTime;
 	
-	setInfo("Executing process " + executingProcess["id"] + " executed for 10ms.");
+	setInfo("Executing process " + executingProcess["id"] + " executed for 10ms.", "success");
 
 	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+
 							executingProcess["quantum"]+" / "+executingProcess["time"];
 
 	if(Math.floor((Math.random() * 100) + 1) < 50){
-		setInfo("Process " + executingProcess["id"] + " made a I/O request.");
+		setInfo("Process " + executingProcess["id"] + " made a I/O request.", "success");
 		executingProcess["io"] = "true";
 	}
 	
 	if(executingProcess["time"] == 0){
 		executingProcess["status"] = "done";
 		removeProcess("#E_" + executingProcess["id"]);
-		setInfo("Process " + executingProcess["id"] + " is complete.");
+		setInfo("Process " + executingProcess["id"] + " is complete.", "success");
 		executingProcess = null;
 	}
 	else if(executingProcess["io"] == "true"){
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
-		setInfo("Process " + executingProcess["id"] + " is blocked.");
+		setInfo("Process " + executingProcess["id"] + " is blocked.", "success");
 		executingProcess = null;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"]){
 		removeProcess("#E_" + executingProcess["id"]);
 		expireProcess(executingProcess);
 		executingProcess["quantumUsed"] = 0;
-		setInfo("Process " + executingProcess["id"] + " expired.");
+		setInfo("Process " + executingProcess["id"] + " expired.", "success");
 		executingProcess = null;
 	}
 
@@ -158,7 +159,7 @@ function checkBlocked(){
 			document.getElementById('io_' + processes[i]["id"]).innerHTML = "I/O: " +
 													(processes[i]["io"] == 0 ? 0 : processes[i]["ioRemaining"]);
 
-			setInfo("Process " + processes[i]["id"] + " realized I/O.");
+			setInfo("Process " + processes[i]["id"] + " realized I/O.", "danger");
 
 			if(processes[i]["ioRemaining"] == 0){
 				processes[i]["ioRemaining"] = processes[i]["ioTime"];
@@ -167,16 +168,16 @@ function checkBlocked(){
 
 				if(processes[i]["time"] == 0){
 					processes[i]["status"] = "done";
-					setInfo("Process " + processes[i]["id"] + " is complete.");
+					setInfo("Process " + processes[i]["id"] + " is complete.", "danger");
 				}
 				else if(processes[i]["quantum"] == processes[i]["quantumUsed"]){
 					expireProcess(processes[i]);
 					processes[i]["quantumUsed"] = 0;
-					setInfo("Process " + processes[i]["id"] + " expired.");
+					setInfo("Process " + processes[i]["id"] + " expired.", "danger");
 				}
 				else{
 					makeProcessReady(processes[i]);
-					setInfo("Process " + processes[i]["id"] + " completed it's I/O request.");
+					setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
 				}
 			}
 		}
@@ -201,7 +202,7 @@ function checkReady(){
 		if(i != processes.length){
 			removeProcess("#R_" + processes[i]["id"]);
 			executeProcess(processes[i]);	
-			setInfo("Process " + processes[i]["id"] + " is now executing.");
+			setInfo("Process " + processes[i]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
 			mainAlgorithm();
@@ -219,7 +220,7 @@ function checkEnd(){
 	};
 
 	clearInterval(interval);
-	setInfo("All processes were executed.");
+	setInfo("All processes were executed.", "primary");
 }
 
 $(document).ready(function() {

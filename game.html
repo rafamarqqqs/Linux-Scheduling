@@ -36,12 +36,18 @@
 
 		<li>
 			<div id="info">
-				<div class="alert alert-info" role="alert">INFORMATION</div>
+				<div class="alert alert-info" role="alert">Starting scheduling...</div>
 			</div>
 		</li>
 
 		<li>
-			<button type="button" class="btn btn-primary btn-lg" id="statisticsButton" data-toggle="modal" data-target="#myModal">
+			<button type="button" class="btn btn-primary btn-lg" id="logsButton" data-toggle="modal" data-target="#logModal">
+				Log
+			</button>
+		</li>
+
+		<li>
+			<button type="button" class="btn btn-primary btn-lg" id="statisticsButton" data-toggle="modal" data-target="#statisticsModal">
 				Statistics
 			</button>
 		</li>
@@ -116,7 +122,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="statisticsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -136,6 +142,23 @@
         .<br>
         BLABLA<br>
         BLABLABLA<br>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Log</h4>
+      </div>
+      <div id="modalTextArea" class="modal-body">
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
