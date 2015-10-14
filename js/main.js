@@ -2,6 +2,16 @@ var processes = [];
 var processingTime = 10;
 var ioProcessingTime = 10;
 var executingProcess = null;
+var steps = -1;
+
+
+
+
+//PRECISA FAZER MOSTRAR AS COISAS DANDO UPDATE EM REAL TIME 
+
+
+
+
 
 //objeto para guardar os dados dos processos
 var Process = {
@@ -30,6 +40,10 @@ function process(id, priority, time, io, status, quantum, ioTime){
 	processes[processes.length - 1]["status"] = status;
 }
 
+function setInfo(info){
+	document.getElementById('info').innerHTML = "<div class=\"alert alert-info\" role=\"alert\">" + info + "</div>";
+}
+
 //codigo html que gera a figura do processo (grupo de botoes)
 function getHTMLText(block, n){
 	return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
@@ -38,11 +52,13 @@ function getHTMLText(block, n){
 		"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+processes[n]["quantum"]+" / "+processes[n]["time"] + "</span>" +
 		"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
 		"<span id=\"io_" + n + "\"class=\"label label-danger\">I/O: " +
-		(processes[n]["io"] == "false" ? "false" : processes[n]["ioRemaining"]) + 
+		(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
 		"</span></div>";
 }
 
 function mainAlgorithm(){
+	setInfo("Swapping vectors...");
+
 	var expiredHTML = document.getElementById('expired').innerHTML;
 	var expired = document.getElementById('expired');
 
@@ -99,31 +115,34 @@ function checkExecution(){
 
 	executingProcess["quantumUsed"] += 10;
 	executingProcess["time"] -= processingTime;
+	
+	setInfo("Executing process " + executingProcess["id"] + " executed for 10ms.");
 
-	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+executingProcess["quantum"]+" / "+executingProcess["time"];
+	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+
+							executingProcess["quantum"]+" / "+executingProcess["time"];
 
-	var chance = Math.floor((Math.random() * 100) + 1);
-
-	if(chance < 50)
+	if(Math.floor((Math.random() * 100) + 1) < 50){
+		setInfo("Process " + executingProcess["id"] + " made a I/O request.");
 		executingProcess["io"] = "true";
+	}
 	
 	if(executingProcess["time"] == 0){
-		console.log("executing process is done");
 		executingProcess["status"] = "done";
 		removeProcess("#E_" + executingProcess["id"]);
+		setInfo("Process " + executingProcess["id"] + " is complete.");
 		executingProcess = null;
 	}
 	else if(executingProcess["io"] == "true"){
-		console.log("executing process is blocked");
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
+		setInfo("Process " + executingProcess["id"] + " is blocked.");
 		executingProcess = null;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"]){
-		console.log("executing process is expired");
 		removeProcess("#E_" + executingProcess["id"]);
 		expireProcess(executingProcess);
 		executingProcess["quantumUsed"] = 0;
+		setInfo("Process " + executingProcess["id"] + " expired.");
 		executingProcess = null;
 	}
 
@@ -135,26 +154,30 @@ function checkBlocked(){
 			processes[i]["status"] = "blocked";
 		else if(processes[i]["status"] == "blocked"){
 			processes[i]["ioRemaining"] -= ioProcessingTime;
-
+			
 			document.getElementById('io_' + processes[i]["id"]).innerHTML = "I/O: " +
-													(processes[i]["io"] == "false" ? "false" : processes[i]["ioRemaining"]);
+													(processes[i]["io"] == 0 ? 0 : processes[i]["ioRemaining"]);
+
+			setInfo("Process " + processes[i]["id"] + " realized I/O.");
 
 			if(processes[i]["ioRemaining"] == 0){
 				processes[i]["ioRemaining"] = processes[i]["ioTime"];
 				removeProcess("#B_" + processes[i]["id"]);
-				processes[i]["io"] = "false";
+				processes[i]["io"] = 0;
 
 				if(processes[i]["time"] == 0){
-					console.log("blocked process is done");
 					processes[i]["status"] = "done";
+					setInfo("Process " + processes[i]["id"] + " is complete.");
 				}
 				else if(processes[i]["quantum"] == processes[i]["quantumUsed"]){
-					console.log("blocked process is expired");
 					expireProcess(processes[i]);
 					processes[i]["quantumUsed"] = 0;
+					setInfo("Process " + processes[i]["id"] + " expired.");
 				}
-				else 
+				else{
 					makeProcessReady(processes[i]);
+					setInfo("Process " + processes[i]["id"] + " completed it's I/O request.");
+				}
 			}
 		}
 	}
@@ -178,13 +201,17 @@ function checkReady(){
 		if(i != processes.length){
 			removeProcess("#R_" + processes[i]["id"]);
 			executeProcess(processes[i]);	
+			setInfo("Process " + processes[i]["id"] + " is now executing.");
 		}
-		else if(expired == 1 && complete != processes.length)
+		else if(expired == 1 && complete != processes.length){
 			mainAlgorithm();
+			setTimeout(checkReady, 1000);
+		}
+		
+		setTimeout(checkEnd, 500);
 	}
 }
 
-//precisa refazer
 function checkEnd(){
 	for (var i = processes.length - 1; i >= 0; i--) {
 		if(processes[i]["status"] != "done")
@@ -192,16 +219,23 @@ function checkEnd(){
 	};
 
 	clearInterval(interval);
-	console.log("done");
+	setInfo("All processes were executed.");
 }
 
+$(document).ready(function() {
+	setTimeout(mainLoop, 2000);
+	checkReady();
+});
+
 var mainLoop = function(){
-	setTimeout(checkExecution, 500);
-	setTimeout(checkBlocked, 1000);
-	setTimeout(checkReady, 1500);
-	setTimeout(checkEnd, 2000);
+	setTimeout(checkExecution, 4000);
+	setTimeout(checkBlocked, 2000);
+	setTimeout(checkReady(), 6000);
+	steps++;
+	document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + 
+		(steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
 };
-var interval = setInterval(mainLoop, 7000);
+var interval = setInterval(mainLoop, 8000);
 
 $(document).ready(function() {
 	var p;
@@ -209,10 +243,10 @@ $(document).ready(function() {
 	blockedSize = 1;
 	readySize = 1;
 
-	process(0, 1, 10, "false", "ready", 20, 20);
-	process(1, 2, 20, "false", "ready", 20, 20);
-	process(2, 3, 30, "false", "ready", 20, 20);
-	process(3, 3, 40, "false", "ready", 20, 20);
+	process(0, 1, 10, 0, "ready", 20, 20);
+	process(1, 2, 20, 0, "ready", 20, 20);
+	process(2, 3, 30, 0, "ready", 20, 20);
+	process(3, 3, 40, 0, "ready", 20, 20);
 
 	p = getHTMLText("R", 0);
 	$(p).appendTo('#ready');

@@ -33,14 +33,26 @@ body {
 }
 
 #statisticsButton {
-    position: fixed;
-	bottom: 30px;
-	margin-left: 80%;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	vertical-align: text-top;
 }
 
-#nextStepButton {
-    position: fixed;
-	bottom: 30px;
-	margin-left:auto;
-	margin-right:auto;
+#info {
+	width: 500px;
+	margin: 20px;
+	margin-left: 150px;
+	margin-right: 170px;
+	text-align: center;
+	vertical-align: text-top;
+}
+
+#counter {
+	padding: 10px;
+	text-align: center;
+    width: 100px;
+	margin: 20px;
+	margin-left: 30px;
+	background-color: #DADFE0;
 }

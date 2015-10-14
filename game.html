@@ -13,13 +13,47 @@
 	</head>
 <body>
 
-<nav class="navbar navbar-default navbar-static-top">
-	<div class="container">
-		<ul class="nav navbar-nav">
-        	<li class="active"><a href="index.html">Home</a></li>
-		</ul>
-	</div>
+<div class="container">
+	
+<nav class="navbar navbar-default">
+    <div class="navbar-header">
+     	<a class="navbar-brand" href="index.html">Home</a>
+		<a class="navbar-brand" href="#">Play</a>
+		<a class="navbar-brand" href="instructions.html">Instructions</a>
+		<a class="navbar-brand" href="learnMore.html">Learn more</a>
+		<a class="navbar-brand" href="about.html">About</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      	<ul class="nav navbar-nav">
+
+      	<li>
+	    	<div id="counter" class="thumbnail">
+	    		<span class="text-center lead">0</span>
+	    	</div>
+      	</li>
+
+		<li>
+			<div id="info">
+				<div class="alert alert-info" role="alert">INFORMATION</div>
+			</div>
+		</li>
+
+		<li>
+			<button type="button" class="btn btn-primary btn-lg" id="statisticsButton" data-toggle="modal" data-target="#myModal">
+				Statistics
+			</button>
+		</li>
+
+
+      	</ul>
+
+    </div><!-- /.navbar-collapse -->
 </nav>
+</div>
+
+
 
 <div class="container">
 	<div class="row">
@@ -81,10 +115,6 @@
 	  	</div>
 	</div>
 </div>
-
-<button type="button" class="btn btn-primary btn-lg" id="statisticsButton" data-toggle="modal" data-target="#myModal">
-  Statistics
-</button>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
