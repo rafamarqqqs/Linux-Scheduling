@@ -13,10 +13,10 @@ var Process = {
 	ioRemaining: -1,
 	quantum: -1,
 	quantumUsed: -1,
-	state: -1,
+	status: -1,
 };
 
-function process(id, priority, time, io, state, quantum, ioTime){
+function process(id, priority, time, io, status, quantum, ioTime){
 	Process = {};
 	processes[processes.length] = Process;
 	processes[processes.length - 1]["id"] = id;
@@ -27,7 +27,7 @@ function process(id, priority, time, io, state, quantum, ioTime){
 	processes[processes.length - 1]["io"] = io;
 	processes[processes.length - 1]["ioTime"] = ioTime;
 	processes[processes.length - 1]["ioRemaining"] = ioTime;
-	processes[processes.length - 1]["state"] = state;
+	processes[processes.length - 1]["status"] = status;
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)
@@ -53,8 +53,8 @@ function mainAlgorithm(){
 	$(expiredHTML).appendTo("#ready").hide().slideDown("slow");
 
 	for(var i = 0; i < processes.length; i++){
-		if(processes[i]["state"] == "expired"){
-			processes[i]["state"] = "ready";
+		if(processes[i]["status"] == "expired"){
+			processes[i]["status"] = "ready";
 			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
 		}
 	}
@@ -69,26 +69,26 @@ function removeProcess(p){
 
 function executeProcess(p){
 	executingProcess = p;
-	p["state"] = "exec";
+	p["status"] = "exec";
 	var aux = getHTMLText("E", p["id"]);
 	$(aux).appendTo('#exec').hide().slideDown("fast");
 }
 
 function blockProcess(p){
 	p["io"] = "true";
-	p["state"] = "justBlocked";
+	p["status"] = "justBlocked";
 	var aux = getHTMLText("B", p["id"]);
 	$(aux).appendTo('#blocked').hide().slideDown("fast");
 }
 
 function makeProcessReady(p){
-	p["state"] = "ready";	
+	p["status"] = "ready";	
 	var aux = getHTMLText("R", p["id"]);
 	$(aux).appendTo('#ready').hide().slideDown("fast");
 }
 
 function expireProcess(p){
-	p["state"] = "expired";	
+	p["status"] = "expired";	
 	var aux = getHTMLText("Ex", p["id"]);
 	$(aux).appendTo('#expired').hide().slideDown("fast");
 }
@@ -97,110 +97,111 @@ function checkExecution(){
 	if(executingProcess == null)
 		return;
 
-	var p = executingProcess;
+	executingProcess["quantumUsed"] += 10;
+	executingProcess["time"] -= processingTime;
 
-	p["quantumUsed"] += 10;
-	p["time"] -= processingTime;
-
-	document.getElementById('time_' + p["id"]).innerHTML = "Time: "+p["quantum"]+" / "+p["time"];
+	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+executingProcess["quantum"]+" / "+executingProcess["time"];
 
 	var chance = Math.floor((Math.random() * 100) + 1);
 
 	if(chance < 50)
-		p["io"] = "true";
+		executingProcess["io"] = "true";
 	
-	if(p["time"] == 0){
-		removeProcess("#E_" + p["id"]);
-		p["status"] = "done";
+	if(executingProcess["time"] == 0){
+		console.log("executing process is done");
+		executingProcess["status"] = "done";
+		removeProcess("#E_" + executingProcess["id"]);
 		executingProcess = null;
 	}
-	else if(p["io"] == "true"){
-		removeProcess("#E_" + p["id"]);
-		blockProcess(p);
+	else if(executingProcess["io"] == "true"){
+		console.log("executing process is blocked");
+		removeProcess("#E_" + executingProcess["id"]);
+		blockProcess(executingProcess);
 		executingProcess = null;
 	}
-	else if(p["quantum"] == p["quantumUsed"]){
-		removeProcess("#E_" + p["id"]);
-		expireProcess(p);
-		p["quantumUsed"] = 0;
+	else if(executingProcess["quantum"] == executingProcess["quantumUsed"]){
+		console.log("executing process is expired");
+		removeProcess("#E_" + executingProcess["id"]);
+		expireProcess(executingProcess);
+		executingProcess["quantumUsed"] = 0;
 		executingProcess = null;
 	}
 
 }
 
 function checkBlocked(){
-	var p;
-
 	for (var i = processes.length - 1; i >= 0; i--){
-		if(processes[i]["time"] > 0){
-			if(processes[i]["state"] == "justBlocked")
-				processes[i]["state"] = "blocked";
-			else if(processes[i]["state"] == "blocked"){
-				p = processes[i];
+		if(processes[i]["status"] == "justBlocked")
+			processes[i]["status"] = "blocked";
+		else if(processes[i]["status"] == "blocked"){
+			processes[i]["ioRemaining"] -= ioProcessingTime;
 
-				p["ioRemaining"] -= ioProcessingTime;
-				document.getElementById('io_' + p["id"]).innerHTML = "I/O: " +
-														(p["io"] == "false" ? "false" : p["ioRemaining"]);
+			document.getElementById('io_' + processes[i]["id"]).innerHTML = "I/O: " +
+													(processes[i]["io"] == "false" ? "false" : processes[i]["ioRemaining"]);
 
-				if(p["ioRemaining"] == 0){
-					p["ioRemaining"] = p["ioTime"]
-					removeProcess("#B_" + p["id"]);
-					p["io"] = "false";
+			if(processes[i]["ioRemaining"] == 0){
+				processes[i]["ioRemaining"] = processes[i]["ioTime"];
+				removeProcess("#B_" + processes[i]["id"]);
+				processes[i]["io"] = "false";
 
-					if(p["time"] == 0){
-						p["status"] = "done";
-						removeProcess(p);
-					}
-					else if(p["quantum"] == p["quantumUsed"]){
-						expireProcess(p);
-						p["quantumUsed"] = 0;
-					}
-					else 
-						makeProcessReady(p);
+				if(processes[i]["time"] == 0){
+					console.log("blocked process is done");
+					processes[i]["status"] = "done";
 				}
+				else if(processes[i]["quantum"] == processes[i]["quantumUsed"]){
+					console.log("blocked process is expired");
+					expireProcess(processes[i]);
+					processes[i]["quantumUsed"] = 0;
+				}
+				else 
+					makeProcessReady(processes[i]);
 			}
 		}
 	}
 }
 
 function checkReady(){
-	var p;
+	var expired = 1;
+	var complete = 0;
 
 	if(executingProcess == null){
 		for (var i = 0; i < processes.length; i++) {
-			if(processes[i]["time"] > 0 && processes[i]["state"] == "ready"){
-				p = processes[i];
+			if(processes[i]["status"] == "ready")
 				break;
-			}
-		}
+
+			if(processes[i]["status"] != "expired" && processes[i]["status"] != "done")
+				expired = 0;
+			else if(processes[i]["status"] == "done")
+				complete++;
+		};
 
 		if(i != processes.length){
-			removeProcess("#R_" + p["id"]);
-			executeProcess(p);	
+			removeProcess("#R_" + processes[i]["id"]);
+			executeProcess(processes[i]);	
 		}
-		else 
-			checkEnd();
+		else if(expired == 1 && complete != processes.length)
+			mainAlgorithm();
 	}
 }
 
+//precisa refazer
 function checkEnd(){
 	for (var i = processes.length - 1; i >= 0; i--) {
-		if(processes[i]["status"] == "expired"){
-			mainAlgorithm();
+		if(processes[i]["status"] != "done")
 			return;
-		}
 	};
 
 	clearInterval(interval);
-	document.write("done");
+	console.log("done");
 }
 
 var mainLoop = function(){
-	setTimeout(checkExecution, 1000);
-	setTimeout(checkBlocked, 2000);
-	setTimeout(checkReady, 3000);
+	setTimeout(checkExecution, 500);
+	setTimeout(checkBlocked, 1000);
+	setTimeout(checkReady, 1500);
+	setTimeout(checkEnd, 2000);
 };
-var interval = setInterval(mainLoop, 8000);
+var interval = setInterval(mainLoop, 7000);
 
 $(document).ready(function() {
 	var p;
