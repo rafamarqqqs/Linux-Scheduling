@@ -3,13 +3,28 @@ var processingTime = 10;
 var ioProcessingTime = 10;
 var executingProcess = null;
 var steps = -1;
-
-
+var quant = 0;
 
 
 //PRECISA FAZER MOSTRAR AS COISAS DANDO UPDATE EM REAL TIME 
 
+function changeProcessQuant(){
+	var elem = document.getElementById('processQuant');
+	quant = elem.options[elem.selectedIndex].value;
+	console.log(quant);
 
+	for (var i = quant; i >= 0; i--) {
+		addProcessForm();
+	};
+}
+
+function addProcessForm(){
+
+}
+
+function getProcessHTMLForm(){
+
+}
 
 
 
@@ -19,6 +34,7 @@ var Process = {
 	priority:-1,
 	time:-1,
 	io: -1,
+	ioChance: -1,
 	ioTime: -1,
 	ioRemaining: -1,
 	quantum: -1,
@@ -26,7 +42,7 @@ var Process = {
 	status: -1,
 };
 
-function process(id, priority, time, io, status, quantum, ioTime){
+function process(id, priority, time, io, status, quantum, ioTime, ioChance){
 	Process = {};
 	processes[processes.length] = Process;
 	processes[processes.length - 1]["id"] = id;
@@ -35,18 +51,23 @@ function process(id, priority, time, io, status, quantum, ioTime){
 	processes[processes.length - 1]["quantum"] = quantum;
 	processes[processes.length - 1]["quantumUsed"] = 0;
 	processes[processes.length - 1]["io"] = io;
+	processes[processes.length - 1]["ioChance"] = ioChance;
 	processes[processes.length - 1]["ioTime"] = ioTime;
 	processes[processes.length - 1]["ioRemaining"] = ioTime;
 	processes[processes.length - 1]["status"] = status;
 }
 
 function setInfo(info, color){
-	document.getElementById('info').innerHTML = "<div class=\"alert alert-" + color + "\" role=\"alert\">" + info + "</div>";
+	if(color == "primary")
+		document.getElementById('info').innerHTML = "<div class=\"alert bg-primary\" role=\"alert\">" + info + "</div>";
+	else
+		document.getElementById('info').innerHTML = "<div class=\"alert alert-" + color + "\" role=\"alert\">" + info + "</div>";
+
 	$("#modalTextArea").append("<span class=\"label label-" + color + "\">" + info + "</span><br>");
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)
-function getHTMLText(block, n){
+function getProcessHTMLBlock(block, n){
 	return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
 		   "<div class=\"list-group-item  processBg\">" + 
 		"<span class=\"label label-primary\">ID: " + processes[n]["id"] + "   </span>" +
@@ -87,26 +108,26 @@ function removeProcess(p){
 function executeProcess(p){
 	executingProcess = p;
 	p["status"] = "exec";
-	var aux = getHTMLText("E", p["id"]);
+	var aux = getProcessHTMLBlock("E", p["id"]);
 	$(aux).appendTo('#exec').hide().slideDown("fast");
 }
 
 function blockProcess(p){
 	p["io"] = "true";
 	p["status"] = "justBlocked";
-	var aux = getHTMLText("B", p["id"]);
+	var aux = getProcessHTMLBlock("B", p["id"]);
 	$(aux).appendTo('#blocked').hide().slideDown("fast");
 }
 
 function makeProcessReady(p){
 	p["status"] = "ready";	
-	var aux = getHTMLText("R", p["id"]);
+	var aux = getProcessHTMLBlock("R", p["id"]);
 	$(aux).appendTo('#ready').hide().slideDown("fast");
 }
 
 function expireProcess(p){
 	p["status"] = "expired";	
-	var aux = getHTMLText("Ex", p["id"]);
+	var aux = getProcessHTMLBlock("Ex", p["id"]);
 	$(aux).appendTo('#expired').hide().slideDown("fast");
 }
 
@@ -117,12 +138,12 @@ function checkExecution(){
 	executingProcess["quantumUsed"] += 10;
 	executingProcess["time"] -= processingTime;
 	
-	setInfo("Executing process " + executingProcess["id"] + " executed for 10ms.", "success");
+	setInfo("Process " + executingProcess["id"] + " executed for 10ms.", "success");
 
 	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+
 							executingProcess["quantum"]+" / "+executingProcess["time"];
 
-	if(Math.floor((Math.random() * 100) + 1) < 50){
+	if(Math.floor((Math.random() * 100) + 1) < executingProcess["ioChance"]){
 		setInfo("Process " + executingProcess["id"] + " made a I/O request.", "success");
 		executingProcess["io"] = "true";
 	}
@@ -206,7 +227,7 @@ function checkReady(){
 		}
 		else if(expired == 1 && complete != processes.length){
 			mainAlgorithm();
-			setTimeout(checkReady, 1000);
+			setTimeout(checkReady, 700);
 		}
 		
 		setTimeout(checkEnd, 500);
@@ -223,39 +244,33 @@ function checkEnd(){
 	setInfo("All processes were executed.", "primary");
 }
 
-$(document).ready(function() {
-	setTimeout(mainLoop, 2000);
-	checkReady();
-});
 
-var mainLoop = function(){
-	setTimeout(checkExecution, 4000);
-	setTimeout(checkBlocked, 2000);
-	setTimeout(checkReady(), 6000);
-	steps++;
-	document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + 
-		(steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
-};
-var interval = setInterval(mainLoop, 8000);
-
-$(document).ready(function() {
+function startGame(){
 	var p;
-	execSize = 1;
-	blockedSize = 1;
-	readySize = 1;
 
-	process(0, 1, 10, 0, "ready", 20, 20);
-	process(1, 2, 20, 0, "ready", 20, 20);
-	process(2, 3, 30, 0, "ready", 20, 20);
-	process(3, 3, 40, 0, "ready", 20, 20);
+	process(0, 1, 10, 0, "ready", 20, 20, 50);
+	process(1, 2, 20, 0, "ready", 20, 20, 50);
+	process(2, 3, 30, 0, "ready", 20, 20, 50);
+	process(3, 3, 40, 0, "ready", 20, 20, 50);
 
-	p = getHTMLText("R", 0);
+	p = getProcessHTMLBlock("R", 0);
 	$(p).appendTo('#ready');
-	p = getHTMLText("R", 1);
+	p = getProcessHTMLBlock("R", 1);
 	$(p).appendTo('#ready');
-	p = getHTMLText("R", 2);
+	p = getProcessHTMLBlock("R", 2);
 	$(p).appendTo('#ready');
-	p = getHTMLText("R", 3);
+	p = getProcessHTMLBlock("R", 3);
 	$(p).appendTo('#ready');
 
-});
+	checkReady();
+	mainLoop();
+
+	var mainLoop = function(){
+		setTimeout(checkExecution, 2000);
+		setTimeout(checkBlocked, 4000);
+		setTimeout(checkReady(), 6000);
+		steps++;
+		document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
+	};
+	var interval = setInterval(mainLoop, 7000);
+}

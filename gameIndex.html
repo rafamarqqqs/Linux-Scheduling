@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <title>Linux Scheduling !</title>
+
+	    <!-- Bootstrap -->
+	    <link href="css/bootstrap.min.css" rel="stylesheet">
+	    <link href="css/bootstrap.css" rel="stylesheet">
+	    <link href="css/reaCSS.css" rel="stylesheet">
+	</head>
+<body>
+
+<div class="container">
+	<nav class="navbar navbar-default">
+	    <div class="navbar-header">
+	     	<a class="navbar-brand" href="index.html">Home</a>
+			<a class="navbar-brand" href="#">Play</a>
+			<a class="navbar-brand" href="instructions.html">Instructions</a>
+			<a class="navbar-brand" href="learnMore.html">Learn more</a>
+			<a class="navbar-brand" href="about.html">About</a>
+	    </div>
+	</nav>
+
+<select onchange="changeProcessQuant()" id="processQuant" class="form-control">
+	<option>1</option>
+	<option>2</option>
+	<option>3</option>
+	<option>4</option>
+	<option>5</option>
+	<option>6</option>
+</select>
+
+<div id="processForms">
+	<div class="well well-sm processWell">
+			<div class="row">
+
+				<div class="col-sm-4">
+					<label for="processPriority">Priority</label>
+					<select onchange="changeProcessPriority()" id="processPriority" class="form-control">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+
+				<div class="col-sm-4">
+					<label for="processTime">Time</label>
+					<select onchange="changeProcessTime()" id="processTime" class="form-control">
+						<option>10</option>
+						<option>20</option>
+						<option>30</option>
+						<option>40</option>
+						<option>50</option>
+					</select>
+				</div>
+
+				<div class="col-sm-4">
+					<label for="processQuantum">Quantum</label>
+					<select onchange="changeProcessQuantum()" id="processQuantum" class="form-control">
+						<option>10</option>
+						<option>20</option>
+						<option>30</option>
+						<option>40</option>
+						<option>50</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-5">
+					<label for="ProcessIOChance">I/O chance</label>
+					<textarea class="form-control" rows="1" cols="1"></textarea>
+				</div>
+
+				<div class="col-sm-5">
+					<label for="processIOTime">I/O Time</label>
+					<select onchange="changeProcessIOTime()" id="processIOTime" class="form-control">
+						<option>10</option>
+						<option>20</option>
+						<option>30</option>
+						<option>40</option>
+						<option>50</option>
+					</select>
+				</div>
+				
+				<div class="row">
+					<div class="col-md-11">
+						<input id="slider" onchange="changeProcessIO()" type="range" name="b" value="50"/>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>
+
+</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
