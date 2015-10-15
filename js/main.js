@@ -13,20 +13,99 @@ function changeProcessQuant(){
 	quant = elem.options[elem.selectedIndex].value;
 	console.log(quant);
 
-	for (var i = quant; i >= 0; i--) {
-		addProcessForm();
+	for (var i = 0; i < 6; i++)
+		document.getElementById("col" + (i + 1)).innerHTML = "";
+
+	for (var i = 0; i < quant; i++){
+		addProcessForm(i, "col" + (i + 1));
 	};
 }
 
-function addProcessForm(){
+function addProcessForm(id, col){
+	var elem = getProcessHTMLForm(id);
+	$(elem).appendTo(document.getElementById(col));
+}
+
+function getProcessHTMLForm(id){
+	return "<div class=\"well well-sm processWell\">" +
+			"<div class=\"row\">" +
+			"<div class=\"col-sm-4\">" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process\" for=\"processPriority\">Priority</label>" +
+						"<select onchange=\"changeProcessPriority(this.id)\" id=\"processPriority_" + id + "\" class=\"form-control\">" +
+							"<option>1</option>" +
+								"<option>2</option>" +
+								"<option>3</option>" +
+								"<option>4</option>" +
+								"<option>5</option>" +
+							"</select>" +
+					"</div>" +
+				"<div class=\"col-sm-4\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time necessary to complete the process\" for=\"processTime\">Time</label>" +
+						"<select onchange=\"changeProcessTime(this.id)\" id=\"processTime_" + id + "\" class=\"form-control\">" +
+							"<option>10</option>" +
+								"<option>20</option>" +
+								"<option>30</option>" +
+								"<option>40</option>" +
+								"<option>50</option>" +
+							"</select>" +
+					"</div>" +
+				"<div class=\"col-sm-4\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time the process can stay executing\" for=\"processQuantum\">Quantum</label>" +
+						"<select onchange=\"changeProcessQuantum(this.id)\" id=\"processQuantum_" + id + "\" class=\"form-control\">" +
+							"<option>10</option>" +
+								"<option>20</option>" +
+								"<option>30</option>" +
+								"<option>40</option>" +
+								"<option>50</option>" +
+							"</select>" +
+					"</div>" +
+			"</div>" +
+		"<div class=\"row\">" +
+			"<div class=\"col-sm-5\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines a chance for the process to require I/O data\" for=\"processIOChance\">I/O chance</label>" +
+						"<textarea readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+					"</div>" +
+				"<div class=\"col-sm-5\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time for the process to finish it's I/O request\" for=\"processIOTime\">I/O Time</label>" +
+						"<select onchange=\"changeProcessIOTime(this.id)\" id=\"processIOTime_" + id + "\" class=\"form-control\">" +
+								"<option>10</option>" +
+								"<option>20</option>" +
+								"<option>30</option>" +
+								"<option>40</option>" +
+								"<option>50</option>" +
+							"</select>" +
+					"</div>" +
+				"<div class=\"row\">" +
+					"<div class=\"col-md-11\">" +
+							"<input id=\"slider_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"35\"/>" +
+							"</div>" +
+					"</div>" +
+			"</div>" +
+		"</div>";
+}
+
+function changeProcessIOChance(id){
+	var elem = document.getElementById(id);
+	var n = id.split("_");
+	var v = elem.value;
+	document.getElementById("processIOChance_" + n[1]).innerHTML = v;
+}
+
+function changeProcessIOTime(id){
 
 }
 
-function getProcessHTMLForm(){
+function changeProcessQuantum(id){
 
 }
 
+function changeProcessTime(id){
 
+}
+
+function changeProcessPriority(id){
+
+}
 
 //objeto para guardar os dados dos processos
 var Process = {

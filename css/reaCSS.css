@@ -17,6 +17,7 @@ body {
 	background-color: #d9534f;
 }
 
+
 .execColor {
 	border-radius: 10px;
 	background-color: #5cb85c;
@@ -42,7 +43,21 @@ body {
 	margin: 2px 3px 5px 3px;
 }
 
-#slider {
+.readyButton {
+	position: fixed;
+	width: 400px;
+	height: 50px;
+	bottom: 40px;
+	margin-left: 50%;
+	left: -200px;
+}
+.preset {
+	padding: 10px;
+	width: 650px;
+	vertical-align: text-top;
+}
+
+.col-md-11 {
 	margin-left: 15px;
 	margin-right: 10px;
 }
