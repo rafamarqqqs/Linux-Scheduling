@@ -1,6 +1,10 @@
 var processes = [];
+var overallProcessingTime = 0;
+var overallIOTime = 0;
+var idleTime = 0;
 var processingTime = 10;
 var ioProcessingTime = 10;
+var interval;
 var executingProcess = null;
 var steps = -1;
 var quant = 0;
@@ -11,7 +15,6 @@ var quant = 0;
 function changeProcessQuant(){
 	var elem = document.getElementById('processQuant');
 	quant = elem.options[elem.selectedIndex].value;
-	console.log(quant);
 
 	for (var i = 0; i < 6; i++)
 		document.getElementById("col" + (i + 1)).innerHTML = "";
@@ -31,7 +34,7 @@ function getProcessHTMLForm(id){
 			"<div class=\"row\">" +
 			"<div class=\"col-sm-4\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process\" for=\"processPriority\">Priority</label>" +
-						"<select onchange=\"changeProcessPriority(this.id)\" id=\"processPriority_" + id + "\" class=\"form-control\">" +
+						"<select id=\"processPriority_" + id + "\" class=\"form-control\">" +
 							"<option>1</option>" +
 								"<option>2</option>" +
 								"<option>3</option>" +
@@ -41,7 +44,7 @@ function getProcessHTMLForm(id){
 					"</div>" +
 				"<div class=\"col-sm-4\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time necessary to complete the process\" for=\"processTime\">Time</label>" +
-						"<select onchange=\"changeProcessTime(this.id)\" id=\"processTime_" + id + "\" class=\"form-control\">" +
+						"<select id=\"processTime_" + id + "\" class=\"form-control\">" +
 							"<option>10</option>" +
 								"<option>20</option>" +
 								"<option>30</option>" +
@@ -51,7 +54,7 @@ function getProcessHTMLForm(id){
 					"</div>" +
 				"<div class=\"col-sm-4\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time the process can stay executing\" for=\"processQuantum\">Quantum</label>" +
-						"<select onchange=\"changeProcessQuantum(this.id)\" id=\"processQuantum_" + id + "\" class=\"form-control\">" +
+						"<select id=\"processQuantum_" + id + "\" class=\"form-control\">" +
 							"<option>10</option>" +
 								"<option>20</option>" +
 								"<option>30</option>" +
@@ -67,7 +70,7 @@ function getProcessHTMLForm(id){
 					"</div>" +
 				"<div class=\"col-sm-5\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time for the process to finish it's I/O request\" for=\"processIOTime\">I/O Time</label>" +
-						"<select onchange=\"changeProcessIOTime(this.id)\" id=\"processIOTime_" + id + "\" class=\"form-control\">" +
+						"<select id=\"processIOTime_" + id + "\" class=\"form-control\">" +
 								"<option>10</option>" +
 								"<option>20</option>" +
 								"<option>30</option>" +
@@ -84,6 +87,14 @@ function getProcessHTMLForm(id){
 		"</div>";
 }
 
+function getRandom(max, base){
+	return Math.floor((Math.random() * max) + base);
+}
+
+function normalize(n){
+	return (Math.floor((n/10)))*10;
+}
+
 function changeProcessIOChance(id){
 	var elem = document.getElementById(id);
 	var n = id.split("_");
@@ -91,20 +102,53 @@ function changeProcessIOChance(id){
 	document.getElementById("processIOChance_" + n[1]).innerHTML = v;
 }
 
-function changeProcessIOTime(id){
+function get(id){	
+	var elem = document.getElementById(id);
+	return elem.options[elem.selectedIndex].value;
+}
+
+function getValueFromSlider(id){
+	var elem = document.getElementById(id);
+	return elem.value;
+}
+
+function aleatory(){
+	if(quant == 0){
+		alert("Please select one or more processes to schedule");
+		return;
+	}
+
+	localStorage.setItem("quantity", quant);
+
+	for (var i = 0; i < quant; i++){
+		localStorage.setItem("processPriority_" + i, getRandom(4, 1));
+		localStorage.setItem("processTime_" + i, normalize(getRandom(50, 10)));
+		localStorage.setItem("processQuantum_" + i, normalize(getRandom(50, 10)));
+		localStorage.setItem("processIOTime_" + i, normalize(getRandom(50, 10)));
+		localStorage.setItem("processIOChance_" + i, normalize(getRandom(70, 10)));
+	};
+
+	window.location.href = "game.html";
 
 }
 
-function changeProcessQuantum(id){
+function ready(){
+	if(quant == 0){
+		alert("Please select one or more processes to schedule");
+		return;
+	}
 
-}
+	localStorage.setItem("quantity", quant);
 
-function changeProcessTime(id){
+	for (var i = 0; i < quant; i++){
+		localStorage.setItem("processPriority_" + i, get("processPriority_" + i));
+		localStorage.setItem("processTime_" + i, get("processTime_" + i));
+		localStorage.setItem("processQuantum_" + i, get("processQuantum_" + i));
+		localStorage.setItem("processIOTime_" + i, get("processIOTime_" + i));
+		localStorage.setItem("processIOChance_" + i, getValueFromSlider("processIOChance_" + i));
+	};
 
-}
-
-function changeProcessPriority(id){
-
+	window.location.href = "game.html";
 }
 
 //objeto para guardar os dados dos processos
@@ -121,7 +165,7 @@ var Process = {
 	status: -1,
 };
 
-function process(id, priority, time, io, status, quantum, ioTime, ioChance){
+function addProcess(id, priority, time, io, status, quantum, ioTime, ioChance){
 	Process = {};
 	processes[processes.length] = Process;
 	processes[processes.length - 1]["id"] = id;
@@ -150,7 +194,7 @@ function getProcessHTMLBlock(block, n){
 	return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
 		   "<div class=\"list-group-item  processBg\">" + 
 		"<span class=\"label label-primary\">ID: " + processes[n]["id"] + "   </span>" +
-		"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+processes[n]["quantum"]+" / "+processes[n]["time"] + "</span>" +
+		"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+processes[n]["quantumUsed"] +"/" +processes[n]["quantum"]+" | "+processes[n]["time"] + "</span>" +
 		"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
 		"<span id=\"io_" + n + "\"class=\"label label-danger\">I/O: " +
 		(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
@@ -211,20 +255,25 @@ function expireProcess(p){
 }
 
 function checkExecution(){
-	if(executingProcess == null)
+	if(executingProcess == null){
+		idleTime += processingTime;
 		return;
+	}
+
+	var io = false;
+
+	overallProcessingTime += processingTime;
 
 	executingProcess["quantumUsed"] += 10;
 	executingProcess["time"] -= processingTime;
 	
 	setInfo("Process " + executingProcess["id"] + " executed for 10ms.", "success");
 
-	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+
-							executingProcess["quantum"]+" / "+executingProcess["time"];
+	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+executingProcess["quantumUsed"] +"/" +executingProcess["quantum"]+" | "+executingProcess["time"];
 
-	if(Math.floor((Math.random() * 100) + 1) < executingProcess["ioChance"]){
+	if(getRandom(100, 1) < executingProcess["ioChance"]){
 		setInfo("Process " + executingProcess["id"] + " made a I/O request.", "success");
-		executingProcess["io"] = "true";
+		io = true;
 	}
 	
 	if(executingProcess["time"] == 0){
@@ -233,7 +282,7 @@ function checkExecution(){
 		setInfo("Process " + executingProcess["id"] + " is complete.", "success");
 		executingProcess = null;
 	}
-	else if(executingProcess["io"] == "true"){
+	else if(io == true){
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
 		setInfo("Process " + executingProcess["id"] + " is blocked.", "success");
@@ -250,6 +299,7 @@ function checkExecution(){
 }
 
 function checkBlocked(){
+	var io = false;
 	for (var i = processes.length - 1; i >= 0; i--){
 		if(processes[i]["status"] == "justBlocked")
 			processes[i]["status"] = "blocked";
@@ -260,6 +310,11 @@ function checkBlocked(){
 													(processes[i]["io"] == 0 ? 0 : processes[i]["ioRemaining"]);
 
 			setInfo("Process " + processes[i]["id"] + " realized I/O.", "danger");
+
+			if(!io){
+				overallIOTime += ioProcessingTime;
+				io = true;
+			}
 
 			if(processes[i]["ioRemaining"] == 0){
 				processes[i]["ioRemaining"] = processes[i]["ioTime"];
@@ -291,7 +346,7 @@ function checkReady(){
 	if(executingProcess == null){
 		for (var i = 0; i < processes.length; i++) {
 			if(processes[i]["status"] == "ready")
-				break;
+					break;
 
 			if(processes[i]["status"] != "expired" && processes[i]["status"] != "done")
 				expired = 0;
@@ -305,11 +360,11 @@ function checkReady(){
 			setInfo("Process " + processes[i]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
-			mainAlgorithm();
-			setTimeout(checkReady, 700);
+			setTimeout(mainAlgorithm(), 500);
+			setTimeout(checkReady(), 1000);
 		}
 		
-		setTimeout(checkEnd, 500);
+		setTimeout(checkEnd, 1300);
 	}
 }
 
@@ -325,31 +380,42 @@ function checkEnd(){
 
 
 function startGame(){
-	var p;
+	quant = localStorage.getItem("quantity");
 
-	process(0, 1, 10, 0, "ready", 20, 20, 50);
-	process(1, 2, 20, 0, "ready", 20, 20, 50);
-	process(2, 3, 30, 0, "ready", 20, 20, 50);
-	process(3, 3, 40, 0, "ready", 20, 20, 50);
+	for(var i = 0; i < quant; i++){
+		var priority = localStorage.getItem("processPriority_" + i);
+		var time = localStorage.getItem("processTime_" + i);
+		var quantum = localStorage.getItem("processQuantum_" + i);
+		var IOTime = localStorage.getItem("processIOTime_" + i);
+		var IOChance = localStorage.getItem("processIOChance_" + i);
 
-	p = getProcessHTMLBlock("R", 0);
-	$(p).appendTo('#ready');
-	p = getProcessHTMLBlock("R", 1);
-	$(p).appendTo('#ready');
-	p = getProcessHTMLBlock("R", 2);
-	$(p).appendTo('#ready');
-	p = getProcessHTMLBlock("R", 3);
-	$(p).appendTo('#ready');
+		addProcess(i, priority, time, 0, "ready", quantum, IOTime, IOChance);
+	}
 
-	checkReady();
-	mainLoop();
+	for (var i = 0; i < quant; i++) {
+		var p = getProcessHTMLBlock("R", i);
+		$(p).appendTo('#ready');
+	};
 
 	var mainLoop = function(){
-		setTimeout(checkExecution, 2000);
+		setTimeout(checkReady(), 2000);
 		setTimeout(checkBlocked, 4000);
-		setTimeout(checkReady(), 6000);
+		setTimeout(checkExecution, 6000);
+		overallTime += processingTime;
 		steps++;
 		document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
+		setStatistics();
 	};
-	var interval = setInterval(mainLoop, 7000);
+			
+	interval = setInterval(mainLoop, 9000);
+}
+
+function setStatistics(){
+	var stat = document.getElementById('statisticsContent');
+
+	var iT = "Idle time: " + idleTime + "ms. <br>";
+	var uT = "Used time: " + overallProcessingTime + "ms. <br>";
+	var cpuUsage = "CPU usage: " + ((overallIOTime/overallTime)*100) + "%. <br>";
+
+	stat.innerHTML = iT + uT + cpuUsage;
 }
