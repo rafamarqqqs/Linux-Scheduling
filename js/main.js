@@ -1,19 +1,19 @@
 var processes = [];
+
 var overallProcessingTime = 0;
 var overallIOTime = 0;
 var overallTime = 0;
 var idleTime = 0;
+
+var processCPUTime = 0;
 var processingTime = 10;
 var ioProcessingTime = 10;
+
 var interval;
+
 var executingProcess = null;
 var steps = -1;
 var quant = 0;
-var display = [];
-var movements = 0;
-
-
-//PRECISA FAZER MOSTRAR AS COISAS DANDO UPDATE EM REAL TIME 
 
 function changeProcessQuant(){
 	var elem = document.getElementById('processQuant');
@@ -221,6 +221,7 @@ function mainAlgorithm(){
 			processes[i]["status"] = "ready";
 			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
 			processes[i]["quantumUsed"] = 0;
+			document.getElementById('time_' + processes[i]["id"]).innerHTML = "Time: "+processes[i]["quantumUsed"] +"/" +processes[i]["quantum"]+" | "+processes[i]["time"];
 		}
 	}
 
@@ -267,13 +268,15 @@ function checkExecution(){
 	}
 
 	var io = false;
+	var remake = false;
 
 	overallProcessingTime += processingTime;
 
-	executingProcess["quantumUsed"] += 10;
+	executingProcess["quantumUsed"] += ioProcessingTime;
 	executingProcess["time"] -= processingTime;
+	processCPUTime += processingTime;
 	
-	setInfo("Process " + executingProcess["id"] + " executed for 10ms.", "success");
+	setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
 
 	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+executingProcess["quantumUsed"] +"/" +executingProcess["quantum"]+" | "+executingProcess["time"];
 
@@ -286,20 +289,25 @@ function checkExecution(){
 		executingProcess["status"] = "done";
 		removeProcess("#E_" + executingProcess["id"]);
 		setInfo("Process " + executingProcess["id"] + " is complete.", "success");
-		executingProcess = null;
+		remake = true;
 	}
 	else if(io == true){
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
 		setInfo("Process " + executingProcess["id"] + " is blocked.", "success");
-		executingProcess = null;
+		remake = true;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"]){
 		removeProcess("#E_" + executingProcess["id"]);
 		expireProcess(executingProcess);
 		executingProcess["quantumUsed"] = 0;
 		setInfo("Process " + executingProcess["id"] + " expired.", "success");
+		remake = true;
+	}
+
+	if(remake == true){
 		executingProcess = null;
+		processCPUTime = 0;
 	}
 
 }
@@ -327,6 +335,8 @@ function checkBlocked(){
 				removeProcess("#B_" + processes[i]["id"]);
 				processes[i]["io"] = 0;
 
+				setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
+
 				if(processes[i]["time"] == 0){
 					processes[i]["status"] = "done";
 					setInfo("Process " + processes[i]["id"] + " is complete.", "danger");
@@ -338,7 +348,6 @@ function checkBlocked(){
 				}
 				else{
 					makeProcessReady(processes[i]);
-					setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
 				}
 			}
 		}
@@ -366,7 +375,7 @@ function checkReady(){
 			setInfo("Process " + processes[i]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
-			setTimeout(mainAlgorithm, 500);
+			setTimeout(mainAlgorithm, 1000);
 			setTimeout(checkReady, 1000);
 		}
 		
@@ -406,17 +415,21 @@ function startGame(){
 	};
 
 	var mainLoop = function(){
-		setTimeout(checkReady, 2000);
-		setTimeout(checkBlocked, 4000);
-		setTimeout(checkExecution, 6000);
-		setTimeout(checkEnd, 8000);
+		checkExecution();
+		setTimeout(checkBlocked, 2000);
+		setTimeout(checkReady, 4000);
+		setTimeout(checkEnd, 6000);
 		overallTime += processingTime;
 		steps++;
 		document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
 		setStatistics();
 	};
-			
-	interval = setInterval(mainLoop, 9000);
+
+	setTimeout(function(){
+		checkReady();
+		setTimeout(mainLoop, 2000);
+		interval = setInterval(mainLoop, 7000);
+	}, 1000);
 }
 
 function setStatistics(){
@@ -424,7 +437,7 @@ function setStatistics(){
 
 	var iT = "Idle time: " + idleTime + "ms. <br>";
 	var uT = "Used time: " + overallProcessingTime + "ms. <br>";
-	var cpuUsage = "CPU usage: " + (((overallTime - overallIOTime)/overallTime)*100) + "%. <br>";
+	var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100) + "%. <br>";
 
 	stat.innerHTML = iT + uT + cpuUsage;
 }
