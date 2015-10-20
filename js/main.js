@@ -1,6 +1,7 @@
 var processes = [];
 var overallProcessingTime = 0;
 var overallIOTime = 0;
+var overallTime = 0;
 var idleTime = 0;
 var processingTime = 10;
 var ioProcessingTime = 10;
@@ -8,6 +9,8 @@ var interval;
 var executingProcess = null;
 var steps = -1;
 var quant = 0;
+var display = [];
+var movements = 0;
 
 
 //PRECISA FAZER MOSTRAR AS COISAS DANDO UPDATE EM REAL TIME 
@@ -217,8 +220,11 @@ function mainAlgorithm(){
 		if(processes[i]["status"] == "expired"){
 			processes[i]["status"] = "ready";
 			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
+			processes[i]["quantumUsed"] = 0;
 		}
 	}
+
+	document.getElementById('expiredBlock').innerHTML = "<div id=\"expired\"></div>";
 }
 
 //apaga um bloco de uma regiao
@@ -360,11 +366,10 @@ function checkReady(){
 			setInfo("Process " + processes[i]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
-			setTimeout(mainAlgorithm(), 500);
-			setTimeout(checkReady(), 1000);
+			setTimeout(mainAlgorithm, 500);
+			setTimeout(checkReady, 1000);
 		}
 		
-		setTimeout(checkEnd, 1300);
 	}
 }
 
@@ -389,6 +394,9 @@ function startGame(){
 		var IOTime = localStorage.getItem("processIOTime_" + i);
 		var IOChance = localStorage.getItem("processIOChance_" + i);
 
+		if(IOChance == "")
+			IOChance = 35;
+
 		addProcess(i, priority, time, 0, "ready", quantum, IOTime, IOChance);
 	}
 
@@ -398,9 +406,10 @@ function startGame(){
 	};
 
 	var mainLoop = function(){
-		setTimeout(checkReady(), 2000);
+		setTimeout(checkReady, 2000);
 		setTimeout(checkBlocked, 4000);
 		setTimeout(checkExecution, 6000);
+		setTimeout(checkEnd, 8000);
 		overallTime += processingTime;
 		steps++;
 		document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
@@ -415,7 +424,7 @@ function setStatistics(){
 
 	var iT = "Idle time: " + idleTime + "ms. <br>";
 	var uT = "Used time: " + overallProcessingTime + "ms. <br>";
-	var cpuUsage = "CPU usage: " + ((overallIOTime/overallTime)*100) + "%. <br>";
+	var cpuUsage = "CPU usage: " + (((overallTime - overallIOTime)/overallTime)*100) + "%. <br>";
 
 	stat.innerHTML = iT + uT + cpuUsage;
 }
