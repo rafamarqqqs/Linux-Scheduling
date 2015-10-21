@@ -22,8 +22,7 @@ var nextStepCounter = 1;
 
 /*
 
-nível de prioridade 0 - 140
-se for 0 - 100 -> já é tempo real, nao pode ser retirado de execução até que ele mesmo saia
+QUANDO UM PROCESSO DE TEMPO REAL DEIXA A CPU ELE VAI PRA ONDE ? EXPIRADO OU READY ?
 
 
 */
@@ -144,16 +143,23 @@ function getScheduleType(type){
 	return type == 0 ? "FIFO" : "Round Robin";
 }
 
-function aleatory(){
+function check(){
 	if(quant == 0){
 		alert("Please select one or more processes to schedule");
-		return;
+		return -1;
 	}
 
 	if(mode == null){
 		alert("Please select the mode of the schedule");
-		return;
+		return -1;
 	}
+
+	return 1;
+}
+
+function aleatory(){
+	if(check() == -1)
+		return;
 
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
@@ -176,10 +182,80 @@ function aleatory(){
 		}
 
 		localStorage.setItem("processIOTime_" + i, normalize(getRandom(50, 10)));
-		localStorage.setItem("processIOChance_" + i, normalize(getRandom(70, 10)));
+		localStorage.setItem("processIOChance_" + i, getRandom(70, 10));
 
 		if(type == 0)
-			localStorage.setItem("processLeaveChance_" + i, normalize(getRandom(40, 10)));
+			localStorage.setItem("processLeaveChance_" + i, getRandom(40, 10));
+	};
+
+	window.location.href = "game.html";
+
+}
+
+function ioBounded(){
+	if(check() == -1)
+		return;
+
+	localStorage.setItem("quantity", quant);
+	localStorage.setItem("mode", mode);
+
+	var type;
+	var priority;
+
+	for (var i = 0; i < quant; i++){
+		priority = getRandom(140, 1);
+		localStorage.setItem("processPriority_" + i, priority);
+		localStorage.setItem("processTime_" + i, normalize(getRandom(50, 10)));
+
+		if(priority <= 100){
+			type = getRandom(2, 0);
+			localStorage.setItem("processScheduleType_" + i,  getScheduleType(type));
+		}
+		else{
+			localStorage.setItem("processScheduleType_" + i,  "Round Robin");
+			type = 1;
+		}
+
+		localStorage.setItem("processIOTime_" + i, normalize(getRandom(50, 30)));
+		localStorage.setItem("processIOChance_" + i, getRandom(70, 50));
+
+		if(type == 0)
+			localStorage.setItem("processLeaveChance_" + i, getRandom(40, 10));
+	};
+
+	window.location.href = "game.html";
+
+}
+
+function cpuBounded(){
+	if(check() == -1)
+		return;
+
+	localStorage.setItem("quantity", quant);
+	localStorage.setItem("mode", mode);
+
+	var type;
+	var priority;
+
+	for (var i = 0; i < quant; i++){
+		priority = getRandom(140, 1);
+		localStorage.setItem("processPriority_" + i, priority);
+		localStorage.setItem("processTime_" + i, normalize(getRandom(50, 10)));
+
+		if(priority <= 100){
+			type = getRandom(2, 0);
+			localStorage.setItem("processScheduleType_" + i,  getScheduleType(type));
+		}
+		else{
+			localStorage.setItem("processScheduleType_" + i,  "Round Robin");
+			type = 1;
+		}
+
+		localStorage.setItem("processIOTime_" + i, normalize(getRandom(20, 10)));
+		localStorage.setItem("processIOChance_" + i, getRandom(20, 10));
+
+		if(type == 0)
+			localStorage.setItem("processLeaveChance_" + i, getRandom(40, 10));
 	};
 
 	window.location.href = "game.html";

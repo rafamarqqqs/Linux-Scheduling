@@ -26,15 +26,21 @@
 		<div class="btn-group btn-group-justified preset" role="group" aria-label="...">
 
 			  	<div class="btn-group" role="group">
-			  		<button onclick="aleatory()" type="button" class="btn btn-primary">Aleatory</button>
+					<div data-toggle="tooltip" data-placement="top" title="Starts a new simulation with random processses">
+			  			<button onclick="aleatory()" type="button" class="btn btn-primary">Aleatory</button>
+			  		</div>
 			  	</div>
 
 			  	<div class="btn-group" role="group">
-			  		<button onclick="cpuBounded()" type="button" class="btn btn-primary">CPU bounded</button>
+					<div data-toggle="tooltip" data-placement="top" title="Starts a new simulation with CPU bounded processes">
+			  			<button onclick="cpuBounded()" type="button" class="btn btn-primary">CPU bounded</button>
+			  		</div>
 			  	</div>
 
 			  	<div class="btn-group" role="group">
-			  		<button onclick="ioBounded()" type="button" class="btn btn-primary">I/O bounded</button>
+					<div data-toggle="tooltip" data-placement="top" title="Starts a new simulation with I/O bounded processses">
+			  			<button onclick="ioBounded()" type="button" class="btn btn-primary">I/O bounded</button>
+			  		</div>
 			    </div>
 		</div>
 	</nav>
@@ -78,15 +84,21 @@
 </div>
 
 <button onclick="setAutomatic()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="automatic">
+	<div data-toggle="tooltip" data-placement="top" title="Click to turn automatic mode on">
 	Automatic
+	</div>
 </button>
 
 <button onclick="setStepByStep()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="stepByStep">
+	<div data-toggle="tooltip" data-placement="top" title="Click to turn step by step mode on">
 	Step By Step
+	</div>
 </button>
 
 <a href="#game.html">
-	<button onclick="ready()" type="button" class="btn btn-success readyButton">Ready</button>
+	<div data-toggle="tooltip" data-placement="top" title="Click when you finish inserting all the data of the processes !">
+		<button onclick="ready()" type="button" class="btn btn-success readyButton">Ready</button>
+	</div>
 </a>
 
 </div>
