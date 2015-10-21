@@ -19,6 +19,8 @@ var mode = null;
 var noMove = true;
 var nextStepCounter = 1;
 
+var infos = 0;
+
 
 /*
 
@@ -342,13 +344,19 @@ function addProcess(id, type, priority, time, io, status, quantum, ioTime, ioCha
 
 function setInfo(info, color){
 	noMove = false;
+	infos++;
 
-	if(color == "primary")
-		document.getElementById('info').innerHTML = "<div class=\"alert bg-primary\" role=\"alert\">" + info + "</div>";
-	else
-		document.getElementById('info').innerHTML = "<div class=\"alert alert-" + color + "\" role=\"alert\">" + info + "</div>";
+	setTimeout(function() {
+		infos--;
 
-	$("#modalTextArea").append("<span class=\"label label-" + color + "\">" + info + "</span><br>");
+		if(color == "primary")
+			document.getElementById('info').innerHTML = "<div class=\"alert bg-primary\" role=\"alert\">" + info + "</div>";
+		else
+			document.getElementById('info').innerHTML = "<div class=\"alert alert-" + color + "\" role=\"alert\">" + info + "</div>";
+
+		$("#modalTextArea").append("<span class=\"label label-" + color + "\">" + info + "</span><br>");
+
+	}, infos*700);
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)

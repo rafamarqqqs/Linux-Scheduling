@@ -1,5 +1,29 @@
 body {
-	background-color: #eee;
+	background-color: #FFF;
+}
+
+.mainPage {
+	position: fixed;
+	top: -70px;
+	left: 60px
+}
+
+.mainPage a {
+	width: 200px;
+}
+
+.linuxLogo {
+	position: fixed;
+	right: 10px;
+	bottom: 3px;
+	top: -10px;
+}
+
+.icmcLogo {
+	position: fixed;
+	left: 150px;
+	top: 400px;
+	width: 500px;
 }
 
 .expiredColor {
