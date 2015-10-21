@@ -30,34 +30,44 @@
 
       	<li>
 	    	<div id="counter" class="thumbnail">
-	    		<span class="text-center lead">0</span>
+	    		<span data-toggle="tooltip" data-placement="top" title="Time consumed" class="text-center lead">0</span>
 	    	</div>
       	</li>
-
 		<li>
 			<div id="info">
-				<div class="alert alert-info" role="alert">Starting scheduling...</div>
+				<div data-toggle="tooltip" data-placement="top" title="Current event" class="alert alert-info" role="alert">Starting sheduling...</div>
 			</div>
 		</li>
 
 		<li>
-			<button onclick="nextStep()" type="button" class="btn btn-default btn-lg" id="nextStep">
+			<button data-toggle="tooltip" data-placement="top" title="Next step" onclick="nextStep()" type="button" class="btn btn-default btn-lg mainButtons" id="nextStep">
 				<span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
 			</button>
 		</li>
 
 		<li>
-			<button type="button" class="btn btn-primary btn-lg" id="logsButton" data-toggle="modal" data-target="#logModal">
-				Log
-			</button>
+			<div data-toggle="tooltip" data-placement="top" title="Events log">
+				<button type="button" class="btn btn-primary btn-lg mainButtons" id="logsButton" data-toggle="modal" data-target="#logModal">
+					Log
+				</button>
+			</div>
 		</li>
 
 		<li>
-			<button type="button" class="btn btn-primary btn-lg" id="statisticsButton" data-toggle="modal" data-target="#statisticsModal">
-				Statistics
-			</button>
+			<div data-toggle="tooltip" data-placement="top" title="CPU statistics">
+				<button type="button" class="btn btn-primary btn-lg mainButtons" id="statisticsButton" data-toggle="modal" data-target="#statisticsModal">
+					Statistics
+				</button>
+			</div>
 		</li>
 
+		<li>
+			<div data-toggle="tooltip" data-placement="top" title="Help ! (?)">
+				<button type="button" class="btn btn-warning btn-lg mainButtons" id="helpButton" data-toggle="modal" data-target="#helpModal">
+					Help
+				</button>
+			</div>
+		</li>
 
       	</ul>
 
@@ -74,7 +84,7 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead execColor">Executing</p>
+	        		<p class="text-center lead execColor">Executing process</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="exec">
@@ -86,7 +96,7 @@
 	    <!--BLOCKED AREA-->	
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead blockedColor">Blocked</p>
+	        		<p class="text-center lead blockedColor">Blocked processes</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="blocked">
@@ -100,7 +110,7 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead readyColor">Ready</p>
+	        		<p class="text-center lead readyColor">Ready vector</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="ready">
@@ -114,7 +124,7 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead expiredColor">Expired</p>
+	        		<p class="text-center lead expiredColor">Expired vector</p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="expiredBlock">
@@ -164,6 +174,42 @@
   </div>
 </div>
 
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Help</h4>
+      </div>
+      	
+      	<h3 class="modal-sub-title">Process information</h3>
+      	<div class="modal-info">
+			<span class="label label-success">ID</span><br>
+			<span class="label label-primary">Time used (or FIFO, if FIFO scheduling is being used) / quantum | Time left</span><br>
+			<span class="label label-info">Priority</span><br>
+			<span class="label label-danger">I/O time left</span><br>
+		</div>
+
+      	<h3 class="modal-sub-title">Step by step mode</h3>
+      	<div class="modal-info">
+      		If on step by step mode, press 
+      		<span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+      		to execute the next step.
+      	</div>
+
+      	<h3 class="modal-sub-title">Log</h3>
+      	<div class="modal-info">
+      		Some events aren't shown in the information area, press the
+      		<span class="label label-primary">Log</span>
+      		button to see all past events.
+      	</div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

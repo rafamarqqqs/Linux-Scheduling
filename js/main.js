@@ -12,12 +12,21 @@ var ioProcessingTime = 10;
 var interval;
 
 var executingProcess = null;
-var steps = -1;
+var steps = 0;
 var quant = 0;
 
 var mode = null;
 var noMove = true;
 var nextStepCounter = 1;
+
+
+/*
+
+nível de prioridade 0 - 140
+se for 0 - 100 -> já é tempo real, nao pode ser retirado de execução até que ele mesmo saia
+
+
+*/
 
 function changeProcessQuant(){
 	var elem = document.getElementById('processQuant');
@@ -39,30 +48,31 @@ function addProcessForm(id, col){
 function getProcessHTMLForm(id){
 	return "<div class=\"well well-sm processWell\">" +
 			"<div class=\"row\">" +
-			"<div class=\"col-sm-4\">" +
+			"<div class=\"col-sm-3\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process\" for=\"processPriority\">Priority</label>" +
-						"<select id=\"processPriority_" + id + "\" class=\"form-control\">" +
-							"<option>1</option>" +
-								"<option>2</option>" +
-								"<option>3</option>" +
-								"<option>4</option>" +
-								"<option>5</option>" +
-							"</select>" +
+						"<textarea style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
-				"<div class=\"col-sm-4\">" +
+				"<div class=\"col-sm-3\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time necessary to complete the process\" for=\"processTime\">Time</label>" +
-						"<select id=\"processTime_" + id + "\" class=\"form-control\">" +
-							"<option>10</option>" +
+						"<select id=\"processTime_" + id + "\" class=\"form-control processTexts\">" +
+								"<option>10</option>" +
 								"<option>20</option>" +
 								"<option>30</option>" +
 								"<option>40</option>" +
 								"<option>50</option>" +
 							"</select>" +
 					"</div>" +
-				"<div class=\"col-sm-4\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time the process can stay executing\" for=\"processQuantum\">Quantum</label>" +
-						"<select id=\"processQuantum_" + id + "\" class=\"form-control\">" +
-							"<option>10</option>" +
+				"<div class=\"col-sm-3\">" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the schedule type of the process\" for=\"processScheduleType_\">Type</label>" +
+						"<select id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
+								"<option>FIFO</option>" +
+								"<option>Round Robin</option>" +
+						"</select>" +
+				"</div>" +
+				"<div class=\"col-sm-3\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time for the process to finish it's I/O request\" for=\"\"processIOTime_" + id + "\">I/O Time</label>" +
+						"<select id=\"processIOTime_" + id + "\" class=\"form-control processTextsIO\">" +
+								"<option>10</option>" +
 								"<option>20</option>" +
 								"<option>30</option>" +
 								"<option>40</option>" +
@@ -71,25 +81,24 @@ function getProcessHTMLForm(id){
 					"</div>" +
 			"</div>" +
 		"<div class=\"row\">" +
-			"<div class=\"col-sm-5\">" +
+			"<div class=\"col-sm-6\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines a chance for the process to require I/O data\" for=\"processIOChance\">I/O chance</label>" +
-						"<textarea readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+						"<textarea style=\"resize:none\" readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
-				"<div class=\"col-sm-5\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time for the process to finish it's I/O request\" for=\"processIOTime\">I/O Time</label>" +
-						"<select id=\"processIOTime_" + id + "\" class=\"form-control\">" +
-								"<option>10</option>" +
-								"<option>20</option>" +
-								"<option>30</option>" +
-								"<option>40</option>" +
-								"<option>50</option>" +
-							"</select>" +
+			"<div class=\"col-sm-6\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines a chance for the FIFO process to leave the CPU\" for=\"processLeaveChance_" + id + "\">Leave chance</label>" +
+						"<textarea style=\"resize:none\" readonly id=\"processLeaveChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
 				"<div class=\"row\">" +
 					"<div class=\"col-md-11\">" +
-							"<input id=\"slider_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"35\"/>" +
-							"</div>" +
+						"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
 					"</div>" +
+				"</div>" +
+				"<div class=\"row\">" +
+					"<div class=\"col-md-11\">" +
+						"<input id=\"sliderLeave_" + id + "\" onchange=\"changeProcessLeaveChance(this.id)\" type=\"range\" min=\"0\" max=\"90\" step=\"1\" value=\"30\"/>" +
+					"</div>" +
+				"</div>" +
 			"</div>" +
 		"</div>";
 }
@@ -109,6 +118,18 @@ function changeProcessIOChance(id){
 	document.getElementById("processIOChance_" + n[1]).innerHTML = v;
 }
 
+function changeProcessLeaveChance(id){
+	var elem = document.getElementById(id);
+	var n = id.split("_");
+	var v = elem.value;
+	document.getElementById("processLeaveChance_" + n[1]).innerHTML = v;
+}
+
+function getFromTextArea(id){	
+	var elem = document.getElementById(id);
+	return elem.value;
+}
+
 function get(id){	
 	var elem = document.getElementById(id);
 	return elem.options[elem.selectedIndex].value;
@@ -117,6 +138,10 @@ function get(id){
 function getValueFromSlider(id){
 	var elem = document.getElementById(id);
 	return elem.value;
+}
+
+function getScheduleType(type){
+	return type == 0 ? "FIFO" : "Round Robin";
 }
 
 function aleatory(){
@@ -133,12 +158,28 @@ function aleatory(){
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
 
+	var type;
+	var priority;
+
 	for (var i = 0; i < quant; i++){
-		localStorage.setItem("processPriority_" + i, getRandom(4, 1));
+		priority = getRandom(140, 1);
+		localStorage.setItem("processPriority_" + i, priority);
 		localStorage.setItem("processTime_" + i, normalize(getRandom(50, 10)));
-		localStorage.setItem("processQuantum_" + i, normalize(getRandom(50, 10)));
+
+		if(priority <= 100){
+			type = getRandom(2, 0);
+			localStorage.setItem("processScheduleType_" + i,  getScheduleType(type));
+		}
+		else{
+			localStorage.setItem("processScheduleType_" + i,  "Round Robin");
+			type = 1;
+		}
+
 		localStorage.setItem("processIOTime_" + i, normalize(getRandom(50, 10)));
 		localStorage.setItem("processIOChance_" + i, normalize(getRandom(70, 10)));
+
+		if(type == 0)
+			localStorage.setItem("processLeaveChance_" + i, normalize(getRandom(40, 10)));
 	};
 
 	window.location.href = "game.html";
@@ -156,15 +197,35 @@ function ready(){
 		return;
 	}
 
+	for (var i = 0; i < quant; i++){
+		if(getFromTextArea("processPriority_" + i) > 140 || getFromTextArea("processPriority_" + i) < 0){
+			alert("Please enter a valid priority (0 < priority < 140)");
+			return;
+		}
+	}
+
+	for (var i = 0; i < quant; i++){
+		if(getFromTextArea("processPriority_" + i) > 100 && get("processScheduleType_" + i) == "FIFO"){
+			alert("FIFO schedule mode can be applied only to real time processes ! (priority <= 100)");
+			return;
+		}
+	}
+
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
 
+	var type;
+
 	for (var i = 0; i < quant; i++){
-		localStorage.setItem("processPriority_" + i, get("processPriority_" + i));
+		localStorage.setItem("processPriority_" + i, getFromTextArea("processPriority_" + i));
 		localStorage.setItem("processTime_" + i, get("processTime_" + i));
-		localStorage.setItem("processQuantum_" + i, get("processQuantum_" + i));
+		type =  get("processScheduleType_" + i);
+		localStorage.setItem("processScheduleType_" + i, type);
 		localStorage.setItem("processIOTime_" + i, get("processIOTime_" + i));
 		localStorage.setItem("processIOChance_" + i, getValueFromSlider("processIOChance_" + i));
+
+		if(type == "FIFO")
+			localStorage.setItem("processLeaveChance_" + i, getValueFromSlider("processLeaveChance_" + i));			
 	};
 
 	window.location.href = "game.html";
@@ -181,14 +242,17 @@ var Process = {
 	ioRemaining: -1,
 	quantum: -1,
 	quantumUsed: -1,
+	leaveChance: -1,
+	type: -1,
 	status: -1,
 };
 
-function addProcess(id, priority, time, io, status, quantum, ioTime, ioChance){
+function addProcess(id, type, priority, time, io, status, quantum, ioTime, ioChance, leaveChance){
 	Process = {};
 	processes[processes.length] = Process;
 	processes[processes.length - 1]["id"] = id;
 	processes[processes.length - 1]["priority"] = priority;
+	processes[processes.length - 1]["type"] = type;
 	processes[processes.length - 1]["time"] = time;
 	processes[processes.length - 1]["quantum"] = quantum;
 	processes[processes.length - 1]["quantumUsed"] = 0;
@@ -197,6 +261,7 @@ function addProcess(id, priority, time, io, status, quantum, ioTime, ioChance){
 	processes[processes.length - 1]["ioTime"] = ioTime;
 	processes[processes.length - 1]["ioRemaining"] = ioTime;
 	processes[processes.length - 1]["status"] = status;
+	processes[processes.length - 1]["leaveChance"] = leaveChance;
 }
 
 function setInfo(info, color){
@@ -214,8 +279,8 @@ function setInfo(info, color){
 function getProcessHTMLBlock(block, n){
 	return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
 		   "<div class=\"list-group-item  processBg\">" + 
-		"<span class=\"label label-primary\">ID: " + processes[n]["id"] + "   </span>" +
-		"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+processes[n]["quantumUsed"] +"/" +processes[n]["quantum"]+" | "+processes[n]["time"] + "</span>" +
+		"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
+		"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
 		"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
 		"<span id=\"io_" + n + "\"class=\"label label-danger\">I/O: " +
 		(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
@@ -239,7 +304,7 @@ function mainAlgorithm(){
 			processes[i]["status"] = "ready";
 			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
 			processes[i]["quantumUsed"] = 0;
-			document.getElementById('time_' + processes[i]["id"]).innerHTML = "Time: "+processes[i]["quantumUsed"] +"/" +processes[i]["quantum"]+" | "+processes[i]["time"];
+			document.getElementById('time_' + processes[i]["id"]).innerHTML = "Time: "+(processes[i]["type"] == "FIFO" ? "FIFO" : processes[i]["quantumUsed"] +"/" +processes[i]["quantum"])+" | "+ (processes[i]["time"] < 0 ? 0 : processes[i]["time"]);
 		}
 	}
 
@@ -255,7 +320,6 @@ function removeProcess(p){
 }
 
 function executeProcess(p){
-
 	executingProcess = p;
 	p["status"] = "exec";
 	var aux = getProcessHTMLBlock("E", p["id"]);
@@ -263,7 +327,6 @@ function executeProcess(p){
 }
 
 function blockProcess(p){
-
 	p["io"] = "true";
 	p["status"] = "justBlocked";
 	var aux = getProcessHTMLBlock("B", p["id"]);
@@ -271,14 +334,12 @@ function blockProcess(p){
 }
 
 function makeProcessReady(p){
-
 	p["status"] = "ready";	
 	var aux = getProcessHTMLBlock("R", p["id"]);
 	$(aux).appendTo('#ready').hide().slideDown("fast");
 }
 
 function expireProcess(p){
-
 	p["status"] = "expired";	
 	var aux = getProcessHTMLBlock("Ex", p["id"]);
 	$(aux).appendTo('#expired').hide().slideDown("fast");
@@ -301,26 +362,33 @@ function checkExecution(){
 	
 	setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
 
-	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+executingProcess["quantumUsed"] +"/" +executingProcess["quantum"]+" | "+executingProcess["time"];
+	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+(executingProcess["type"] == "FIFO" ? "FIFO" : executingProcess["quantumUsed"] +"/" +executingProcess["quantum"])+" | "+ (executingProcess["time"] < 0 ? 0 : executingProcess["time"]);
 
 	if(getRandom(100, 1) < executingProcess["ioChance"]){
 		setInfo("Process " + executingProcess["id"] + " made a I/O request.", "success");
 		io = true;
 	}
 	
-	if(executingProcess["time"] == 0){
-		executingProcess["status"] = "done";
-		removeProcess("#E_" + executingProcess["id"]);
-		setInfo("Process " + executingProcess["id"] + " is complete.", "success");
-		remake = true;
-	}
-	else if(io == true){
+	if(io == true){
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
 		setInfo("Process " + executingProcess["id"] + " is blocked.", "success");
 		remake = true;
 	}
-	else if(executingProcess["quantum"] == executingProcess["quantumUsed"]){
+	else if(executingProcess["time"] <= 0){
+		executingProcess["status"] = "done";
+		removeProcess("#E_" + executingProcess["id"]);
+		setInfo("Process " + executingProcess["id"] + " is complete.", "success");
+		remake = true;
+	}
+	else if(executingProcess["type"] == "FIFO" && getRandom(100, 1) < executingProcess["leaveChance"]){
+		removeProcess("#E_" + executingProcess["id"]);
+		makeProcessReady(executingProcess);
+		executingProcess["quantumUsed"] = 0;
+		setInfo("Process " + executingProcess["id"] + " left the CPU.", "success");
+		remake = true;
+	}
+	else if(executingProcess["quantum"] == executingProcess["quantumUsed"] && executingProcess["type"] != "FIFO"){
 		removeProcess("#E_" + executingProcess["id"]);
 		expireProcess(executingProcess);
 		executingProcess["quantumUsed"] = 0;
@@ -337,6 +405,7 @@ function checkExecution(){
 
 function checkBlocked(){
 	var io = false;
+
 	for (var i = processes.length - 1; i >= 0; i--){
 		if(processes[i]["status"] == "justBlocked")
 			processes[i]["status"] = "blocked";
@@ -360,7 +429,7 @@ function checkBlocked(){
 
 				setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
 
-				if(processes[i]["time"] == 0){
+				if(processes[i]["time"] <= 0){
 					processes[i]["status"] = "done";
 					setInfo("Process " + processes[i]["id"] + " is complete.", "danger");
 				}
@@ -380,11 +449,16 @@ function checkBlocked(){
 function checkReady(){
 	var expired = 1;
 	var complete = 0;
+	var priority = 141;
+	var j = -1;
 
 	if(executingProcess == null){
 		for (var i = 0; i < processes.length; i++) {
-			if(processes[i]["status"] == "ready")
-					break;
+
+			if(processes[i]["status"] == "ready" && parseInt(processes[i]["priority"]) < priority){
+				j = i;
+				priority = parseInt(processes[j]["priority"]);
+			}
 
 			if(processes[i]["status"] != "expired" && processes[i]["status"] != "done")
 				expired = 0;
@@ -392,16 +466,15 @@ function checkReady(){
 				complete++;
 		};
 
-		if(i != processes.length){
-			removeProcess("#R_" + processes[i]["id"]);
-			executeProcess(processes[i]);	
-			setInfo("Process " + processes[i]["id"] + " is now executing.", "info");
+		if(j != -1){
+			removeProcess("#R_" + processes[j]["id"]);
+			executeProcess(processes[j]);	
+			setInfo("Process " + processes[j]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
 			setTimeout(mainAlgorithm, 500);
 			setTimeout(checkReady, 1000);
 		}
-		
 	}
 }
 
@@ -415,24 +488,31 @@ function checkEnd(){
 	setInfo("All processes were executed.", "primary");
 }
 
+function getProcessQuantum(p){
+	if(p > 100)
+		return 10;
+	else
+		return normalize(120 - p);
+}
 
 function startGame(){
 	quant = localStorage.getItem("quantity");
 	mode = localStorage.getItem("mode");
 
-	console.log(mode);
-
 	for(var i = 0; i < quant; i++){
 		var priority = localStorage.getItem("processPriority_" + i);
 		var time = localStorage.getItem("processTime_" + i);
-		var quantum = localStorage.getItem("processQuantum_" + i);
+		var type = localStorage.getItem("processScheduleType_" + i);
 		var IOTime = localStorage.getItem("processIOTime_" + i);
 		var IOChance = localStorage.getItem("processIOChance_" + i);
+		var leaveChance = type == "FIFO" ? localStorage.getItem("processLeaveChance_" + i) : -1;
 
 		if(IOChance == "")
 			IOChance = 35;
+		if(leaveChance == "")
+			leaveChance = 30;
 
-		addProcess(i, priority, time, 0, "ready", quantum, IOTime, IOChance);
+		addProcess(i, type, priority, time, 0, "ready", getProcessQuantum(priority), IOTime, IOChance, leaveChance);
 	}
 
 	for (var i = 0; i < quant; i++) {
@@ -497,7 +577,7 @@ function setStatistics(){
 
 	var iT = "Idle time: " + idleTime + "ms. <br>";
 	var uT = "Used time: " + overallProcessingTime + "ms. <br>";
-	var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100) + "%. <br>";
+	var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100).toFixed(2) + "%. <br>";
 
 	stat.innerHTML = iT + uT + cpuUsage;
 }
