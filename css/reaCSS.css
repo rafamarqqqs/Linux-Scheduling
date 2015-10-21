@@ -48,8 +48,7 @@ body {
 	width: 400px;
 	height: 50px;
 	bottom: 40px;
-	margin-left: 50%;
-	left: -200px;
+	margin-left: 600px;
 }
 .preset {
 	padding: 10px;
@@ -61,6 +60,25 @@ body {
 	margin-left: 15px;
 	margin-right: 10px;
 }
+
+#automatic {
+	position: fixed;
+	width: 200px;
+	height: 50px;
+	bottom: 40px;
+	margin-left: 50px;
+	margin-right: 50px;
+}
+
+#stepByStep {
+	position: fixed;
+	width: 200px;
+	height: 50px;
+	bottom: 40px;
+	margin-left: 300px;
+	margin-right: 50px;
+}
+
 
 #statisticsButton {
 	margin-top: 20px;
@@ -76,11 +94,18 @@ body {
 	vertical-align: text-top;	
 }
 
+#nextStep {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	margin-right: 40px;
+	vertical-align: text-top;
+}
+
 #info {
 	width: 500px;
 	margin: 20px;
 	margin-left: 100px;
-	margin-right: 120px;
+	margin-right: 40px;
 	text-align: center;
 	vertical-align: text-top;
 }

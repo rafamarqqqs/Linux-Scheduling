@@ -15,6 +15,10 @@ var executingProcess = null;
 var steps = -1;
 var quant = 0;
 
+var mode = null;
+var noMove = true;
+var nextStepCounter = 1;
+
 function changeProcessQuant(){
 	var elem = document.getElementById('processQuant');
 	quant = elem.options[elem.selectedIndex].value;
@@ -121,7 +125,13 @@ function aleatory(){
 		return;
 	}
 
+	if(mode == null){
+		alert("Please select the mode of the schedule");
+		return;
+	}
+
 	localStorage.setItem("quantity", quant);
+	localStorage.setItem("mode", mode);
 
 	for (var i = 0; i < quant; i++){
 		localStorage.setItem("processPriority_" + i, getRandom(4, 1));
@@ -141,7 +151,13 @@ function ready(){
 		return;
 	}
 
+	if(mode == null){
+		alert("Please select the mode of the schedule");
+		return;
+	}
+
 	localStorage.setItem("quantity", quant);
+	localStorage.setItem("mode", mode);
 
 	for (var i = 0; i < quant; i++){
 		localStorage.setItem("processPriority_" + i, get("processPriority_" + i));
@@ -184,6 +200,8 @@ function addProcess(id, priority, time, io, status, quantum, ioTime, ioChance){
 }
 
 function setInfo(info, color){
+	noMove = false;
+
 	if(color == "primary")
 		document.getElementById('info').innerHTML = "<div class=\"alert bg-primary\" role=\"alert\">" + info + "</div>";
 	else
@@ -226,6 +244,7 @@ function mainAlgorithm(){
 	}
 
 	document.getElementById('expiredBlock').innerHTML = "<div id=\"expired\"></div>";
+	noMove = false;
 }
 
 //apaga um bloco de uma regiao
@@ -236,6 +255,7 @@ function removeProcess(p){
 }
 
 function executeProcess(p){
+
 	executingProcess = p;
 	p["status"] = "exec";
 	var aux = getProcessHTMLBlock("E", p["id"]);
@@ -243,6 +263,7 @@ function executeProcess(p){
 }
 
 function blockProcess(p){
+
 	p["io"] = "true";
 	p["status"] = "justBlocked";
 	var aux = getProcessHTMLBlock("B", p["id"]);
@@ -250,12 +271,14 @@ function blockProcess(p){
 }
 
 function makeProcessReady(p){
+
 	p["status"] = "ready";	
 	var aux = getProcessHTMLBlock("R", p["id"]);
 	$(aux).appendTo('#ready').hide().slideDown("fast");
 }
 
 function expireProcess(p){
+
 	p["status"] = "expired";	
 	var aux = getProcessHTMLBlock("Ex", p["id"]);
 	$(aux).appendTo('#expired').hide().slideDown("fast");
@@ -375,7 +398,7 @@ function checkReady(){
 			setInfo("Process " + processes[i]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
-			setTimeout(mainAlgorithm, 1000);
+			setTimeout(mainAlgorithm, 500);
 			setTimeout(checkReady, 1000);
 		}
 		
@@ -395,6 +418,9 @@ function checkEnd(){
 
 function startGame(){
 	quant = localStorage.getItem("quantity");
+	mode = localStorage.getItem("mode");
+
+	console.log(mode);
 
 	for(var i = 0; i < quant; i++){
 		var priority = localStorage.getItem("processPriority_" + i);
@@ -414,14 +440,17 @@ function startGame(){
 		$(p).appendTo('#ready');
 	};
 
+	if(mode == "automatic")
+		doAutomatic();
+}
+
+function doAutomatic(){
 	var mainLoop = function(){
 		checkExecution();
 		setTimeout(checkBlocked, 2000);
 		setTimeout(checkReady, 4000);
 		setTimeout(checkEnd, 6000);
-		overallTime += processingTime;
-		steps++;
-		document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
+		setProcessing();
 		setStatistics();
 	};
 
@@ -432,6 +461,37 @@ function startGame(){
 	}, 1000);
 }
 
+function doStepByStep(){
+	if(nextStepCounter % 3 == 0){
+		checkExecution();
+	}
+	if(nextStepCounter % 3 == 1){
+		checkBlocked();
+	}
+	if(nextStepCounter % 3 == 2){
+		checkReady();
+		checkEnd();
+		setProcessing();
+	}
+
+	setStatistics();
+}
+
+function nextStep(){
+	noMove = true;
+	
+	while(noMove == true){
+		nextStepCounter++;
+		doStepByStep();
+	}
+}
+
+function setProcessing(){
+	overallTime += processingTime;
+	steps++;
+	document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
+}
+
 function setStatistics(){
 	var stat = document.getElementById('statisticsContent');
 
@@ -440,4 +500,12 @@ function setStatistics(){
 	var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100) + "%. <br>";
 
 	stat.innerHTML = iT + uT + cpuUsage;
+}
+
+function setAutomatic(){
+	mode = "automatic";
+}
+
+function setStepByStep(){
+	mode = "stepByStep";
 }
