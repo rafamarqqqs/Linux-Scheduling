@@ -15,15 +15,17 @@ body {
 .linuxLogo {
 	position: fixed;
 	right: 10px;
-	bottom: 3px;
-	top: -10px;
+	bottom: 30px;
+	top: 30px;
+	height: 600px;
+	width: 550px;
 }
 
 .icmcLogo {
 	position: fixed;
-	left: 150px;
-	top: 400px;
-	width: 500px;
+	left: 220px;
+	top: 420px;
+	width: 350px;
 }
 
 .expiredColor {

@@ -20,6 +20,10 @@ var noMove = true;
 var nextStepCounter = 1;
 
 var infos = 0;
+var end = false;
+
+var blocked = 0;
+var ready = quant;
 
 
 /*
@@ -356,7 +360,7 @@ function setInfo(info, color){
 
 		$("#modalTextArea").append("<span class=\"label label-" + color + "\">" + info + "</span><br>");
 
-	}, infos*700);
+	}, infos*1000);
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)
@@ -372,7 +376,6 @@ function getProcessHTMLBlock(block, n){
 }
 
 function mainAlgorithm(){
-	setInfo("Swapping vectors...", "warning");
 
 	var expiredHTML = document.getElementById('expired').innerHTML;
 	var expired = document.getElementById('expired');
@@ -393,7 +396,6 @@ function mainAlgorithm(){
 	}
 
 	document.getElementById('expiredBlock').innerHTML = "<div id=\"expired\"></div>";
-	noMove = false;
 }
 
 //apaga um bloco de uma regiao
@@ -443,42 +445,41 @@ function checkExecution(){
 	executingProcess["quantumUsed"] += ioProcessingTime;
 	executingProcess["time"] -= processingTime;
 	processCPUTime += processingTime;
-	
-	setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
 
 	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+(executingProcess["type"] == "FIFO" ? "FIFO" : executingProcess["quantumUsed"] +"/" +executingProcess["quantum"])+" | "+ (executingProcess["time"] < 0 ? 0 : executingProcess["time"]);
 
-	if(getRandom(100, 1) < executingProcess["ioChance"]){
-		setInfo("Process " + executingProcess["id"] + " made a I/O request.", "success");
+	if(getRandom(100, 1) < executingProcess["ioChance"])
 		io = true;
-	}
 	
 	if(io == true){
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
-		setInfo("Process " + executingProcess["id"] + " is blocked.", "success");
+		setInfo("Process " + executingProcess["id"] + " made a I/O request and is blocked.", "success");
 		remake = true;
 	}
 	else if(executingProcess["time"] <= 0){
 		executingProcess["status"] = "done";
 		removeProcess("#E_" + executingProcess["id"]);
-		setInfo("Process " + executingProcess["id"] + " is complete.", "success");
+		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and is complete.", "success");
 		remake = true;
 	}
 	else if(executingProcess["type"] == "FIFO" && getRandom(100, 1) < executingProcess["leaveChance"]){
 		removeProcess("#E_" + executingProcess["id"]);
 		makeProcessReady(executingProcess);
 		executingProcess["quantumUsed"] = 0;
-		setInfo("Process " + executingProcess["id"] + " left the CPU.", "success");
+		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and left the CPU.", "success");
 		remake = true;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"] && executingProcess["type"] != "FIFO"){
 		removeProcess("#E_" + executingProcess["id"]);
 		expireProcess(executingProcess);
 		executingProcess["quantumUsed"] = 0;
-		setInfo("Process " + executingProcess["id"] + " expired.", "success");
+		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and expired.", "success");
 		remake = true;
 	}
+	else
+		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
+
 
 	if(remake == true){
 		executingProcess = null;
@@ -489,6 +490,9 @@ function checkExecution(){
 
 function checkBlocked(){
 	var io = false;
+	var p = [0, 0, 0, 0, 0, 0];
+	var text = "";
+	var counter = 0;
 
 	for (var i = processes.length - 1; i >= 0; i--){
 		if(processes[i]["status"] == "justBlocked")
@@ -499,7 +503,7 @@ function checkBlocked(){
 			document.getElementById('io_' + processes[i]["id"]).innerHTML = "I/O: " +
 													(processes[i]["io"] == 0 ? 0 : processes[i]["ioRemaining"]);
 
-			setInfo("Process " + processes[i]["id"] + " realized I/O.", "danger");
+			p[i] = 1;
 
 			if(!io){
 				overallIOTime += ioProcessingTime;
@@ -511,22 +515,38 @@ function checkBlocked(){
 				removeProcess("#B_" + processes[i]["id"]);
 				processes[i]["io"] = 0;
 
-				setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
-
 				if(processes[i]["time"] <= 0){
 					processes[i]["status"] = "done";
-					setInfo("Process " + processes[i]["id"] + " is complete.", "danger");
+					setInfo("Process " + processes[i]["id"] + " completed it's I/O request, and finished.", "danger");
+					p[i] = 0;
 				}
 				else if(processes[i]["quantum"] == processes[i]["quantumUsed"]){
 					expireProcess(processes[i]);
 					processes[i]["quantumUsed"] = 0;
-					setInfo("Process " + processes[i]["id"] + " expired.", "danger");
+					setInfo("Process " + processes[i]["id"] + " completed it's I/O request, and expired.", "danger");
+					p[i] = 0;
 				}
 				else{
+					setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
 					makeProcessReady(processes[i]);
+					p[i] = 0;
 				}
 			}
 		}
+	}
+
+	for (var i = processes.length - 1; i >= 0; i--){
+		if(p[i] == 1){
+			text += i + ", ";
+			counter++;
+		}
+	}
+
+	if(counter > 0){
+		if(counter == 1)
+			setInfo("Process " + text.substr(0, (counter*3) - 2) + " realized I/O.", "danger");
+		else
+			setInfo("Processes " + text.substr(0, (counter*3) - 2) + " realized I/O.", "danger");
 	}
 }
 
@@ -556,7 +576,8 @@ function checkReady(){
 			setInfo("Process " + processes[j]["id"] + " is now executing.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
-			setTimeout(mainAlgorithm, 500);
+			setInfo("Swapping vectors...", "warning");
+			mainAlgorithm();
 			setTimeout(checkReady, 1000);
 		}
 	}
@@ -570,6 +591,7 @@ function checkEnd(){
 
 	clearInterval(interval);
 	setInfo("All processes were executed.", "primary");
+	end = true;
 }
 
 function getProcessQuantum(p){
@@ -609,20 +631,26 @@ function startGame(){
 }
 
 function doAutomatic(){
+	ready = quant;
+	var time = 2000;
+
+	setTimeout(function(){
+		checkReady();
+		setTimeout(mainLoop, 2000);
+		setTimeout(function(){
+			interval = setInterval(mainLoop, 8000);
+		}, 2000);
+	}, 1000);
+	
 	var mainLoop = function(){
 		checkExecution();
+		
 		setTimeout(checkBlocked, 2000);
 		setTimeout(checkReady, 4000);
 		setTimeout(checkEnd, 6000);
 		setProcessing();
 		setStatistics();
 	};
-
-	setTimeout(function(){
-		checkReady();
-		setTimeout(mainLoop, 2000);
-		interval = setInterval(mainLoop, 7000);
-	}, 1000);
 }
 
 function doStepByStep(){
@@ -642,6 +670,9 @@ function doStepByStep(){
 }
 
 function nextStep(){
+	if(end)
+		return;
+
 	noMove = true;
 	
 	while(noMove == true){
