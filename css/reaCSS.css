@@ -4,28 +4,29 @@ body {
 
 .mainPage {
 	position: fixed;
-	top: -70px;
-	left: 60px
+	top: -10%;
+	left: 5%;
+	width: 80%;
 }
 
 .mainPage a {
-	width: 200px;
+	width: 18%;
 }
 
 .linuxLogo {
 	position: fixed;
-	right: 10px;
-	bottom: 30px;
-	top: 30px;
-	height: 600px;
-	width: 550px;
+	right: 1%;
+	bottom: 1%;
+	top: 1%;
+	height: 100%;
+	width: 45%;
 }
 
 .icmcLogo {
 	position: fixed;
-	left: 220px;
-	top: 420px;
-	width: 350px;
+	left: 15%;
+	top: 60%;
+	width: 30%;
 }
 
 .expiredColor {
