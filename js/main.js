@@ -268,29 +268,26 @@ function cpuBounded(){
 
 }
 
-function ready(){
-	if(quant == 0){
-		alert("Please select one or more processes to schedule");
+function readyBtn(){
+	if(check() == -1)
 		return;
-	}
-
-	if(mode == null){
-		alert("Please select the mode of the schedule");
-		return;
-	}
 
 	for (var i = 0; i < quant; i++){
 		if(getFromTextArea("processPriority_" + i) > 140 || getFromTextArea("processPriority_" + i) < 0){
 			alert("Please enter a valid priority (0 < priority < 140)");
 			return;
 		}
-	}
-
-	for (var i = 0; i < quant; i++){
 		if(getFromTextArea("processPriority_" + i) > 100 && get("processScheduleType_" + i) == "FIFO"){
 			alert("FIFO schedule mode can be applied only to real time processes ! (priority <= 100)");
 			return;
 		}
+		if(getFromTextArea("processPriority_" + i) == ""){
+			alert("Please select a priority for the process " + i);
+			return;
+		}
+	}
+
+	for (var i = 0; i < quant; i++){
 	}
 
 	localStorage.setItem("quantity", quant);
