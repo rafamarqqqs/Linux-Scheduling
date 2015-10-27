@@ -1,0 +1,40 @@
+langStrings["en"] = new Array();
+langStrings["en"].language = "English";
+langStrings["en"].document_title = "Linux Scheduling";
+langStrings["en"].menu1 = "Home";
+langStrings["en"].menu2 = "Start";
+langStrings["en"].menu3 = "Instructions";
+langStrings["en"].menu4 = "Learn more";
+langStrings["en"].menu5 = "About";
+langStrings["en"].index_title = "Linux Scheduling !";
+langStrings["en"].index_subtitle = "An open source educational resource about the O(1) Linux process scheduling algorithm.";
+langStrings["en"].index_btn1 = "Start";
+langStrings["en"].index_btn2 = "Instructions";
+langStrings["en"].index_btn3 = "Learn more";
+langStrings["en"].index_btn4 = "About";
+langStrings["en"].processQuant = "<option disabled selected>Select the amount of processes</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>";
+langStrings["en"].gindex_1 = "Automatic";
+langStrings["en"].gindex_2 = "Step By Step";
+langStrings["en"].gindex_3 = "Ready";
+langStrings["en"].gindex_4 = "Aleatory";
+langStrings["en"].gindex_5 = "CPU bounded";
+langStrings["en"].gindex_6 = "I/O bounded";
+langStrings["en"].game1 = "Starting sheduling...";
+langStrings["en"].statisticsButton = "Statistics";
+langStrings["en"].helpButton = "Help";
+langStrings["en"].game2 = "Executing process";
+langStrings["en"].game3 = "Blocked processes";
+langStrings["en"].game4 = "Ready vector";
+langStrings["en"].game5 = "Expired vector";
+
+
+langStrings["en"].myModalLabel = "Statistics";
+langStrings["en"].myModalLabel2 = "Help";
+langStrings["en"].game6 = "Process information";
+langStrings["en"].game7 = "Time used (or FIFO, if FIFO scheduling is being used) / quantum | Time left";
+langStrings["en"].game8 = "Priority";
+langStrings["en"].game9 = "I/O time left";
+langStrings["en"].game10 = "Step by step mode";
+langStrings["en"].game11 = "If on step by step mode, press <span class='glyphicon glyphicon-triangle-right' aria-hidden='true'></span> to execute the next step.";
+langStrings["en"].game12 = "Some information about the events are shown a few milliseconds after they happen. Click the <span class='label label-primary'>Log</span> button to see more clearly all past events.";
+

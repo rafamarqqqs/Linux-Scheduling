@@ -4,7 +4,7 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <title>Linux Scheduling !</title>
+	    <title id="document_title"></title>
 
 	    <!-- Bootstrap -->
 	    <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -16,13 +16,17 @@
 <div class="container">
 	
 <nav class="navbar navbar-default">
-    <div class="navbar-header">
-     	<a class="navbar-brand" href="index.html">Home</a>
-		<a class="navbar-brand" href="#">Start</a>
-		<a class="navbar-brand" href="instructions.html">Instructions</a>
-		<a class="navbar-brand" href="learnMore.html">Learn more</a>
-		<a class="navbar-brand" href="about.html">About</a>
-    </div>
+	    <div class="navbar-header">
+     	<a class="navbar-brand" href="index.html" id="menu1"></a>
+		<a class="navbar-brand" href="gameIndex.html" id="menu2"></a>
+		<a class="navbar-brand" href="instructions.html" id="menu3"></a>
+		<a class="navbar-brand" href="learnMore.html" id="menu4"></a>
+		<a class="navbar-brand" href="about.html" id="menu5"></a>
+    	</div>
+	    <div class="nav navbar-right" >
+			<a class="navbar-brand"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
+			<a class="navbar-brand"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
+	    </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -35,7 +39,7 @@
       	</li>
 		<li>
 			<div data-toggle="tooltip" data-placement="top" title="Current event" id="info">
-				<div class="alert alert-info" role="alert">Starting sheduling...</div>
+				<div class="alert alert-info" role="alert" id="game1"></div>
 			</div>
 		</li>
 
@@ -56,7 +60,6 @@
 		<li>
 			<div data-toggle="tooltip" data-placement="top" title="CPU statistics">
 				<button type="button" class="btn btn-primary btn-lg mainButtons" id="statisticsButton" data-toggle="modal" data-target="#statisticsModal">
-					Statistics
 				</button>
 			</div>
 		</li>
@@ -64,7 +67,6 @@
 		<li>
 			<div data-toggle="tooltip" data-placement="top" title="Help ! (?)">
 				<button type="button" class="btn btn-warning btn-lg mainButtons" id="helpButton" data-toggle="modal" data-target="#helpModal">
-					Help
 				</button>
 			</div>
 		</li>
@@ -84,7 +86,7 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead execColor">Executing process</p>
+	        		<p class="text-center lead execColor" id="game2"></p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="exec">
@@ -96,7 +98,7 @@
 	    <!--BLOCKED AREA-->	
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead blockedColor">Blocked processes</p>
+	        		<p class="text-center lead blockedColor" id="game3"></p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="blocked">
@@ -110,7 +112,7 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead readyColor">Ready vector</p>
+	        		<p class="text-center lead readyColor" id="game4"></p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="ready">
@@ -124,7 +126,7 @@
 	  	<div class="col-sm-4 col-md-4">
 	    	<div class="thumbnail">
 	      		<div class="caption">
-	        		<p class="text-center lead expiredColor">Expired vector</p>
+	        		<p class="text-center lead expiredColor" id="game5"></p>
 	        		<!-- aqui os processos deverão são desenhados, a partir de um script js, em cada área-->
 	        		<!-- agr ta tudo iterativo mas depois tem que fazer script-->
 	        		<div id="expiredBlock">
@@ -145,7 +147,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Statistics</h4>
+        <h4 class="modal-title" id="myModalLabel"></h4>
       </div>
       <div id="statisticsContent" class="modal-body">
 
@@ -162,7 +164,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Log</h4>
+        <h4 class="modal-title" id="myModalLabel1">Log</h4>
       </div>
       <div id="modalTextArea" class="modal-body">
 
@@ -179,29 +181,25 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Help</h4>
+        <h4 class="modal-title" id="myModalLabel2"></h4>
       </div>
       	
-      	<h3 class="modal-sub-title">Process information</h3>
+      	<h3 class="modal-sub-title" id="game6"></h3>
       	<div class="modal-info">
 			<span class="label label-success">ID</span><br>
-			<span class="label label-primary">Time used (or FIFO, if FIFO scheduling is being used) / quantum | Time left</span><br>
-			<span class="label label-info">Priority</span><br>
-			<span class="label label-danger">I/O time left</span><br>
+			<span class="label label-primary" id="game7"></span><br>
+			<span class="label label-info" id="game8"></span><br>
+			<span class="label label-danger" id="game9"></span><br>
 		</div>
 
-      	<h3 class="modal-sub-title">Step by step mode</h3>
-      	<div class="modal-info">
-      		If on step by step mode, press 
-      		<span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
-      		to execute the next step.
+      	<h3 class="modal-sub-title" id="game10"></h3>
+      	<div class="modal-info" id="game11">
+      		
       	</div>
 
       	<h3 class="modal-sub-title">Log</h3>
-      	<div class="modal-info">
-      		Some information about the events are shown a few milliseconds after they happen. Click the
-      		<span class="label label-primary">Log</span>
-      		button to see more clearly all past events.
+      	<div class="modal-info" id="game12">
+      		
       	</div>
 
       <div class="modal-footer">
@@ -219,6 +217,8 @@
     <script src="js/main.js"></script>
 
     <script type="text/javascript">
+    	window.onLoad = loadLanguage('en');
+    	window.onLoad = loadLanguage('pt-BR');
     	window.onLoad = startGame();
     </script>
 

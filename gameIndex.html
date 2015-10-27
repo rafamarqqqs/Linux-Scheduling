@@ -4,7 +4,7 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <title>Linux Scheduling !</title>
+	    <title id="document_title"></title>
 
 	    <!-- Bootstrap -->
 	    <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -16,43 +16,19 @@
 <div class="container">
 	<nav class="navbar navbar-default">
 	    <div class="navbar-header">
-	     	<a class="navbar-brand" href="index.html">Home</a>
-			<a class="navbar-brand" href="#">Play</a>
-			<a class="navbar-brand" href="instructions.html">Instructions</a>
-			<a class="navbar-brand" href="learnMore.html">Learn more</a>
-			<a class="navbar-brand" href="about.html">About</a>
+     	<a class="navbar-brand" href="index.html" id="menu1"></a>
+		<a class="navbar-brand" href="gameIndex.html" id="menu2"></a>
+		<a class="navbar-brand" href="instructions.html" id="menu3"></a>
+		<a class="navbar-brand" href="learnMore.html" id="menu4"></a>
+		<a class="navbar-brand" href="about.html" id="menu5"></a>
+    	</div>
+	    <div class="nav navbar-right" >
+			<a class="navbar-brand"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
+			<a class="navbar-brand"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
 	    </div>
-		
-		<div class="btn-group btn-group-justified preset" role="group" aria-label="...">
-
-			  	<div class="btn-group" role="group">
-					<div data-toggle="tooltip" data-placement="top" title="Starts a new simulation with random processses">
-			  			<button onclick="aleatory()" type="button" class="btn btn-primary">Aleatory</button>
-			  		</div>
-			  	</div>
-
-			  	<div class="btn-group" role="group">
-					<div data-toggle="tooltip" data-placement="top" title="Starts a new simulation with CPU bounded processes">
-			  			<button onclick="cpuBounded()" type="button" class="btn btn-primary">CPU bounded</button>
-			  		</div>
-			  	</div>
-
-			  	<div class="btn-group" role="group">
-					<div data-toggle="tooltip" data-placement="top" title="Starts a new simulation with I/O bounded processses">
-			  			<button onclick="ioBounded()" type="button" class="btn btn-primary">I/O bounded</button>
-			  		</div>
-			    </div>
-		</div>
 	</nav>
 
 <select onchange="changeProcessQuant()" id="processQuant" class="form-control">
-	<option disabled selected>Select the amount of processes</option>
-	<option>1</option>
-	<option>2</option>
-	<option>3</option>
-	<option>4</option>
-	<option>5</option>
-	<option>6</option>
 </select>
 
 <div class="row">
@@ -84,22 +60,40 @@
 </div>
 
 <button onclick="setAutomatic()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="automatic">
-	<div data-toggle="tooltip" data-placement="top" title="Click to turn automatic mode on">
-	Automatic
+	<div data-toggle="tooltip" data-placement="top" title="Click to turn automatic mode on" id="gindex_1">
 	</div>
 </button>
 
 <button onclick="setStepByStep()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="stepByStep">
-	<div data-toggle="tooltip" data-placement="top" title="Click to turn step by step mode on">
-	Step By Step
+	<div data-toggle="tooltip" data-placement="top" title="Click to turn step by step mode on" id="gindex_2">
 	</div>
 </button>
 
 <a href="#game.html">
 	<div data-toggle="tooltip" data-placement="top" title="Click when you finish inserting all the data of the processes !">
-		<button onclick="readyBtn()" type="button" class="btn btn-success readyButton">Ready</button>
+		<button onclick="readyBtn()" type="button" class="btn btn-success readyButton" id="gindex_3"></button>
 	</div>
 </a>
+<div class="btn-group btn-group-justified preset" role="group" aria-label="...">
+
+			  	<div class="btn-group" role="group">
+					<div data-toggle="button" data-placement="top" title="Starts a new simulation with random processses">
+			  			<button onclick="aleatory()" type="button" class="btn btn-primary" id="gindex_4"></button>
+			  		</div>
+			  	</div>
+
+			  	<div class="btn-group" role="group">
+					<div data-toggle="button" data-placement="top" title="Starts a new simulation with CPU bounded processes">
+			  			<button onclick="cpuBounded()" type="button" class="btn btn-primary" id="gindex_5"></button>
+			  		</div>
+			  	</div>
+
+			  	<div class="btn-group" role="group">
+					<div data-toggle="button" data-placement="top" title="Starts a new simulation with I/O bounded processses">
+			  			<button onclick="ioBounded()" type="button" class="btn btn-primary" id="gindex_6"></button>
+			  		</div>
+			    </div>
+		</div>
 
 </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -108,6 +102,10 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/main.js"></script>
+    <script type="text/javascript">
+    	window.onLoad = loadLanguage('en');
+    	window.onLoad = loadLanguage('pt-BR');
+    </script>
 
 </body>
 

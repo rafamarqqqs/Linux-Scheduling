@@ -25,6 +25,10 @@ var end = false;
 var blocked = 0;
 var ready = quant;
 
+var langStrings = new Object();
+var currentLanguage = "";
+var languageToApply = "";
+
 
 /*
 
@@ -51,7 +55,8 @@ function addProcessForm(id, col){
 }
 
 function getProcessHTMLForm(id){
-	return "<div class=\"well well-sm processWell\">" +
+	if (currentLanguage == "en") {
+		return "<div class=\"well well-sm processWell\">" +
 			"<div class=\"row\">" +
 			"<div class=\"col-sm-3\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process\" for=\"processPriority\">Priority</label>" +
@@ -106,6 +111,65 @@ function getProcessHTMLForm(id){
 				"</div>" +
 			"</div>" +
 		"</div>";
+	}
+	else 
+	{
+	return "<div class=\"well well-sm processWell\">" +
+			"<div class=\"row\">" +
+			"<div class=\"col-sm-3\">" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a prioridade do processo\" for=\"processPriority\">Prioridade</label>" +
+						"<textarea style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+					"</div>" +
+				"<div class=\"col-sm-3\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a quantidade de tempo necessária para completar o processo\" for=\"processTime\">Tempo</label>" +
+						"<select id=\"processTime_" + id + "\" class=\"form-control processTexts\">" +
+								"<option>10</option>" +
+								"<option>20</option>" +
+								"<option>30</option>" +
+								"<option>40</option>" +
+								"<option>50</option>" +
+							"</select>" +
+					"</div>" +
+				"<div class=\"col-sm-3\">" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina o tipo de escalonamento do processo\" for=\"processScheduleType_\">Tipo</label>" +
+						"<select id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
+								"<option>FIFO</option>" +
+								"<option>Round Robin</option>" +
+						"</select>" +
+				"</div>" +
+				"<div class=\"col-sm-3\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a quantidade de tempo para o processo terminar sua requisição de E/S\" for=\"\"processIOTime_" + id + "\">Tempo de E/S</label>" +
+						"<select id=\"processIOTime_" + id + "\" class=\"form-control processTextsIO\">" +
+								"<option>10</option>" +
+								"<option>20</option>" +
+								"<option>30</option>" +
+								"<option>40</option>" +
+								"<option>50</option>" +
+							"</select>" +
+					"</div>" +
+			"</div>" +
+		"<div class=\"row\">" +
+			"<div class=\"col-sm-6\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a chance do processo requisitar uma dado de E/S\" for=\"processIOChance\">Chace de E/S</label>" +
+						"<textarea style=\"resize:none\" readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+					"</div>" +
+			"<div class=\"col-sm-6\">" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a chance do processo FIFO deixar a CPU\" for=\"processLeaveChance_" + id + "\">Chance de deixar a CPU</label>" +
+						"<textarea style=\"resize:none\" readonly id=\"processLeaveChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+					"</div>" +
+				"<div class=\"row\">" +
+					"<div class=\"col-md-11\">" +
+						"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
+					"</div>" +
+				"</div>" +
+				"<div class=\"row\">" +
+					"<div class=\"col-md-11\">" +
+						"<input id=\"sliderLeave_" + id + "\" onchange=\"changeProcessLeaveChance(this.id)\" type=\"range\" min=\"0\" max=\"90\" step=\"1\" value=\"30\"/>" +
+					"</div>" +
+				"</div>" +
+			"</div>" +
+		"</div>";
+	}
 }
 
 function getRandom(max, base){
@@ -151,12 +215,18 @@ function getScheduleType(type){
 
 function check(){
 	if(quant == 0){
-		alert("Please select one or more processes to schedule");
+		if (currentLanguage == "en")
+			alert("Please select one or more processes to schedule");
+		else
+			alert("Por favor selecione um ou mais processos para escalonar");
 		return -1;
 	}
 
 	if(mode == null){
-		alert("Please select the mode of the schedule");
+		if (currentLanguage == "en")
+			alert("Please select the mode of the schedule");
+		else
+			alert("Por favor selecione o modo de escalonamento");
 		return -1;
 	}
 
@@ -274,15 +344,24 @@ function readyBtn(){
 
 	for (var i = 0; i < quant; i++){
 		if(getFromTextArea("processPriority_" + i) > 140 || getFromTextArea("processPriority_" + i) < 0){
-			alert("Please enter a valid priority (0 < priority < 140)");
+			if (currentLanguage == "en")
+				alert("Please enter a valid priority (0 < priority < 140)");
+			else
+				alert("Por favor entre com uma prioridade válida(0 < prioridade < 140)");
 			return;
 		}
 		if(getFromTextArea("processPriority_" + i) > 100 && get("processScheduleType_" + i) == "FIFO"){
-			alert("FIFO schedule mode can be applied only to real time processes ! (priority <= 100)");
+			if (currentLanguage == "en")
+				alert("FIFO schedule mode can be applied only to real time processes ! (priority <= 100)");
+			else
+				alert("Modo de escalonamento FIFO pode ser aplicado somente em processos de Tempo Real ! (prioridade <= 100)");
 			return;
 		}
 		if(getFromTextArea("processPriority_" + i) == ""){
-			alert("Please select a priority for the process " + i);
+			if (currentLanguage == "en")
+				alert("Please select a priority for the process " + i);
+			else
+				alert("Por favor selecione a prioridade do processo " + i);
 			return;
 		}
 	}
@@ -362,14 +441,25 @@ function setInfo(info, color){
 
 //codigo html que gera a figura do processo (grupo de botoes)
 function getProcessHTMLBlock(block, n){
-	return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
+	if (currentLanguage == "en") {
+		return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
+			   "<div class=\"list-group-item  processBg\">" + 
+			"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
+			"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
+			"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
+			"<span id=\"io_" + n + "\"class=\"label label-danger\">I/O: " +
+			(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
+			"</span></div>";
+	} else {
+		return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
 		   "<div class=\"list-group-item  processBg\">" + 
 		"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
-		"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
-		"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
-		"<span id=\"io_" + n + "\"class=\"label label-danger\">I/O: " +
+		"<span id=\"time_" + n + "\"class=\"label label-primary\">Tempo: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
+		"<span class=\"label label-info\">Prioridade: " + processes[n]["priority"] + "   </span>" +
+		"<span id=\"io_" + n + "\"class=\"label label-danger\">E/S: " +
 		(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
 		"</span></div>";
+	}
 }
 
 function mainAlgorithm(){
@@ -388,7 +478,10 @@ function mainAlgorithm(){
 			processes[i]["status"] = "ready";
 			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
 			processes[i]["quantumUsed"] = 0;
-			document.getElementById('time_' + processes[i]["id"]).innerHTML = "Time: "+(processes[i]["type"] == "FIFO" ? "FIFO" : processes[i]["quantumUsed"] +"/" +processes[i]["quantum"])+" | "+ (processes[i]["time"] < 0 ? 0 : processes[i]["time"]);
+			if (currentLanguage == "en")
+				document.getElementById('time_' + processes[i]["id"]).innerHTML = "Time: "+(processes[i]["type"] == "FIFO" ? "FIFO" : processes[i]["quantumUsed"] +"/" +processes[i]["quantum"])+" | "+ (processes[i]["time"] < 0 ? 0 : processes[i]["time"]);
+			else
+				document.getElementById('time_' + processes[i]["id"]).innerHTML = "Tempo: "+(processes[i]["type"] == "FIFO" ? "FIFO" : processes[i]["quantumUsed"] +"/" +processes[i]["quantum"])+" | "+ (processes[i]["time"] < 0 ? 0 : processes[i]["time"]);
 		}
 	}
 
@@ -443,7 +536,10 @@ function checkExecution(){
 	executingProcess["time"] -= processingTime;
 	processCPUTime += processingTime;
 
-	document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+(executingProcess["type"] == "FIFO" ? "FIFO" : executingProcess["quantumUsed"] +"/" +executingProcess["quantum"])+" | "+ (executingProcess["time"] < 0 ? 0 : executingProcess["time"]);
+	if (currentLanguage == "en")
+		document.getElementById('time_' + executingProcess["id"]).innerHTML = "Time: "+(executingProcess["type"] == "FIFO" ? "FIFO" : executingProcess["quantumUsed"] +"/" +executingProcess["quantum"])+" | "+ (executingProcess["time"] < 0 ? 0 : executingProcess["time"]);
+	else
+		document.getElementById('time_' + executingProcess["id"]).innerHTML = "Tempo: "+(executingProcess["type"] == "FIFO" ? "FIFO" : executingProcess["quantumUsed"] +"/" +executingProcess["quantum"])+" | "+ (executingProcess["time"] < 0 ? 0 : executingProcess["time"]);
 
 	if(getRandom(100, 1) < executingProcess["ioChance"])
 		io = true;
@@ -451,31 +547,47 @@ function checkExecution(){
 	if(io == true){
 		removeProcess("#E_" + executingProcess["id"]);
 		blockProcess(executingProcess);
-		setInfo("Process " + executingProcess["id"] + " made a I/O request and is blocked.", "success");
+		if (currentLanguage == "en")
+			setInfo("Process " + executingProcess["id"] + " made a I/O request and is blocked.", "success");
+		else
+			setInfo("Processo " + executingProcess["id"] + " fez uma requisição de E/S e foi bloqueado.", "success");
 		remake = true;
 	}
 	else if(executingProcess["time"] <= 0){
 		executingProcess["status"] = "done";
 		removeProcess("#E_" + executingProcess["id"]);
-		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and is complete.", "success");
+		if (currentLanguage == "en")
+			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and is complete.", "success");
+		else
+			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e está completo.", "success");
 		remake = true;
 	}
 	else if(executingProcess["type"] == "FIFO" && getRandom(100, 1) < executingProcess["leaveChance"]){
 		removeProcess("#E_" + executingProcess["id"]);
 		makeProcessReady(executingProcess);
 		executingProcess["quantumUsed"] = 0;
-		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and left the CPU.", "success");
+		if (currentLanguage == "en")
+			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and left the CPU.", "success");
+		else
+			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e deixou a CPU.", "success");
 		remake = true;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"] && executingProcess["type"] != "FIFO"){
 		removeProcess("#E_" + executingProcess["id"]);
 		expireProcess(executingProcess);
 		executingProcess["quantumUsed"] = 0;
-		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and expired.", "success");
+		if (currentLanguage == "en")
+			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and expired.", "success");
+		else
+			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e foi expirado.", "success");
 		remake = true;
 	}
-	else
-		setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
+	else{
+		if (currentLanguage == "en")
+			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
+		else
+			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms.", "success");
+	}
 
 
 	if(remake == true){
@@ -497,9 +609,15 @@ function checkBlocked(){
 		else if(processes[i]["status"] == "blocked"){
 			processes[i]["ioRemaining"] -= ioProcessingTime;
 			
-			document.getElementById('io_' + processes[i]["id"]).innerHTML = "I/O: " +
+			
+			if (currentLanguage == "en") {
+				document.getElementById('io_' + processes[i]["id"]).innerHTML = "I/O: " +
 													(processes[i]["io"] == 0 ? 0 : processes[i]["ioRemaining"]);
-
+			}
+			else{
+				document.getElementById('io_' + processes[i]["id"]).innerHTML = "E/S: " +
+													(processes[i]["io"] == 0 ? 0 : processes[i]["ioRemaining"]);
+			}
 			p[i] = 1;
 
 			if(!io){
@@ -514,17 +632,26 @@ function checkBlocked(){
 
 				if(processes[i]["time"] <= 0){
 					processes[i]["status"] = "done";
-					setInfo("Process " + processes[i]["id"] + " completed it's I/O request, and finished.", "danger");
+					if (currentLanguage == "en")
+						setInfo("Process " + processes[i]["id"] + " completed it's I/O request, and finished.", "danger");
+					else
+						setInfo("Processo " + processes[i]["id"] + " completou sua requisição de E/S, e terminou.", "danger");
 					p[i] = 0;
 				}
 				else if(processes[i]["quantum"] == processes[i]["quantumUsed"]){
 					expireProcess(processes[i]);
 					processes[i]["quantumUsed"] = 0;
-					setInfo("Process " + processes[i]["id"] + " completed it's I/O request, and expired.", "danger");
+					if (currentLanguage == "en")
+						setInfo("Process " + processes[i]["id"] + " completed it's I/O request, and expired.", "danger");
+					else
+						setInfo("Processo " + processes[i]["id"] + " completou sua requisição de E/S, e expirou.", "danger");
 					p[i] = 0;
 				}
 				else{
-					setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
+					if (currentLanguage == "en")
+						setInfo("Process " + processes[i]["id"] + " completed it's I/O request.", "danger");
+					else
+						setInfo("Processo " + processes[i]["id"] + " completou sua requisição de E/S.", "danger");
 					makeProcessReady(processes[i]);
 					p[i] = 0;
 				}
@@ -540,10 +667,18 @@ function checkBlocked(){
 	}
 
 	if(counter > 0){
-		if(counter == 1)
-			setInfo("Process " + text.substr(0, (counter*3) - 2) + " realized I/O.", "danger");
-		else
-			setInfo("Processes " + text.substr(0, (counter*3) - 2) + " realized I/O.", "danger");
+		if(counter == 1){
+			if (currentLanguage == "en")
+				setInfo("Process " + text.substr(0, (counter*3) - 2) + " realized I/O.", "danger");
+			else
+				setInfo("Processo " + text.substr(0, (counter*3) - 2) + " realizou operação de E/S.", "danger");
+		}
+		else{
+			if (currentLanguage == "en")
+				setInfo("Processes " + text.substr(0, (counter*3) - 2) + " realized I/O.", "danger");
+			else
+				setInfo("Processos " + text.substr(0, (counter*3) - 2) + " realizaram operação de E/S.", "danger");	
+		}
 	}
 }
 
@@ -569,11 +704,17 @@ function checkReady(){
 
 		if(j != -1){
 			removeProcess("#R_" + processes[j]["id"]);
-			executeProcess(processes[j]);	
-			setInfo("Process " + processes[j]["id"] + " is now executing.", "info");
+			executeProcess(processes[j]);
+			if (currentLanguage == "en")	
+				setInfo("Process " + processes[j]["id"] + " is now executing.", "info");
+			else
+				setInfo("Processo " + processes[j]["id"] + " está executando agora.", "info");
 		}
 		else if(expired == 1 && complete != processes.length){
-			setInfo("Swapping vectors...", "warning");
+			if (currentLanguage == "en")
+				setInfo("Swapping vectors...", "warning");
+			else
+				setInfo("Trocando vetores...", "warning");
 			mainAlgorithm();
 			setTimeout(checkReady, 1000);
 		}
@@ -587,7 +728,11 @@ function checkEnd(){
 	};
 
 	clearInterval(interval);
-	setInfo("All processes were executed.", "primary");
+	if (currentLanguage == "en")
+		setInfo("All processes were executed.", "primary");
+	else
+		setInfo("Todos os processos foram executados.", "primary");
+
 	end = true;
 }
 
@@ -687,9 +832,16 @@ function setProcessing(){
 function setStatistics(){
 	var stat = document.getElementById('statisticsContent');
 
-	var iT = "Idle time: " + idleTime + "ms. <br>";
-	var uT = "Used time: " + overallProcessingTime + "ms. <br>";
-	var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100).toFixed(2) + "%. <br>";
+	if (currentLanguage == "en"){
+		var iT = "Idle time: " + idleTime + "ms. <br>";
+		var uT = "Used time: " + overallProcessingTime + "ms. <br>";
+		var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100).toFixed(2) + "%. <br>";
+	}
+	else {
+		var iT = "Tempo ocioso: " + idleTime + "ms. <br>";
+		var uT = "Tempo de uso: " + overallProcessingTime + "ms. <br>";
+		var cpuUsage = "Uso de CPU: " + (((overallTime - idleTime)/overallTime)*100).toFixed(2) + "%. <br>";
+	}
 
 	stat.innerHTML = iT + uT + cpuUsage;
 }
@@ -700,4 +852,47 @@ function setAutomatic(){
 
 function setStepByStep(){
 	mode = "stepByStep";
+}
+//------------------------------------------FUNCTIONS OF LANGUAGE-------------------------------------------
+function onLoadLanguage()
+{
+	if(languageToApply != "" && langStrings.hasOwnProperty(languageToApply))
+	{
+		currentLanguage = languageToApply;
+		languageToApply = "";		
+	}
+	else
+	{
+		currentLanguage = localStorage.getItem("language");	
+		if(currentLanguage === null)
+			currentLanguage = "en";		
+	}
+	applyLanguage(currentLanguage);		
+}
+
+function loadLanguage(langName)
+{
+	var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = "lang/"+langName+".js";
+	script.onreadystatechange = onLoadLanguage;
+	script.onload = onLoadLanguage;
+	
+	currentLanguage = langName;	
+    head.appendChild(script);
+}
+
+function applyLanguage(langName)
+{
+	currentLanguage = langName;
+
+	localStorage.setItem("language", currentLanguage);
+	for (var prop in langStrings[currentLanguage]) 
+	{
+		if((prop.toString() == "processQuant") || (prop.toString() == "game12") || (prop.toString() == "game11"))
+			$( "#"+prop ).html(langStrings[currentLanguage][prop]);
+		else
+			$( "#"+prop ).text(langStrings[currentLanguage][prop]);
+	}
 }
