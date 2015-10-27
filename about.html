@@ -4,7 +4,7 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <title>Linux Scheduling !</title>
+	    <title id="document_title"></title>
 
 	    <!-- Bootstrap -->
 	    <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -15,11 +15,15 @@
 <div class="container">
 	<nav class="navbar navbar-default">
 	    <div class="navbar-header">
-	     	<a class="navbar-brand" href="index.html">Home</a>
-			<a class="navbar-brand" href="gameIndex.html">Start</a>
-			<a class="navbar-brand" href="instructions.html">Instructions</a>
-			<a class="navbar-brand" href="learnMore.html">Learn more</a>
-			<a class="navbar-brand" href="#">About</a>
+     	<a class="navbar-brand" href="index.html" id="menu1"></a>
+		<a class="navbar-brand" href="gameIndex.html" id="menu2"></a>
+		<a class="navbar-brand" href="instructions.html" id="menu3"></a>
+		<a class="navbar-brand" href="learnMore.html" id="menu4"></a>
+		<a class="navbar-brand" href="about.html" id="menu5"></a>
+    </div>
+	    <div class="nav navbar-right" >
+			<a class="navbar-brand"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
+			<a class="navbar-brand"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
 	    </div>
 	</nav>
 </div>
@@ -76,6 +80,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script type="text/javascript">
+    	window.onLoad = loadLanguage('en');
+    	window.onLoad = loadLanguage('pt-BR');
+    </script>
 </body>
 
 </html>
