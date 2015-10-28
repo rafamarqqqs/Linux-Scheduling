@@ -443,22 +443,26 @@ function setInfo(info, color){
 function getProcessHTMLBlock(block, n){
 	if (currentLanguage == "en") {
 		return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
-			   "<div class=\"list-group-item  processBg\">" + 
+			   "<div class=\"list-group-item  processBg2\">" + 
 			"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
 			"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
+		"</div>" + 
+		"<div class=\"list-group-item  processBg3\">" +
 			"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
 			"<span id=\"io_" + n + "\"class=\"label label-danger\">I/O: " +
 			(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
-			"</span></div>";
+			"</span></div></div>";
 	} else {
 		return "<div id=\"" + block + "_" + n + "\" class=\"list-group processBg\">" +
-		   "<div class=\"list-group-item  processBg\">" + 
+		   "<div class=\"list-group-item  processBg2\">" + 
 		"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
 		"<span id=\"time_" + n + "\"class=\"label label-primary\">Tempo: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
+		"</div>" + 
+		"<div class=\"list-group-item  processBg3\">" +
 		"<span class=\"label label-info\">Prioridade: " + processes[n]["priority"] + "   </span>" +
 		"<span id=\"io_" + n + "\"class=\"label label-danger\">E/S: " +
 		(processes[n]["io"] == 0 ? 0 : processes[n]["ioRemaining"]) + 
-		"</span></div>";
+		"</span></div></div>";
 	}
 }
 
@@ -478,6 +482,7 @@ function mainAlgorithm(){
 			processes[i]["status"] = "ready";
 			document.getElementById('Ex_' + processes[i]["id"]).setAttribute('id', "R_" + processes[i]["id"]);
 			processes[i]["quantumUsed"] = 0;
+
 			if (currentLanguage == "en")
 				document.getElementById('time_' + processes[i]["id"]).innerHTML = "Time: "+(processes[i]["type"] == "FIFO" ? "FIFO" : processes[i]["quantumUsed"] +"/" +processes[i]["quantum"])+" | "+ (processes[i]["time"] < 0 ? 0 : processes[i]["time"]);
 			else
@@ -826,7 +831,6 @@ function nextStep(){
 function setProcessing(){
 	overallTime += processingTime;
 	steps++;
-	document.getElementById('counter').innerHTML = "<span class=\"text-center lead\">" + (steps*processingTime < 0 ? 0 : steps*processingTime) + "</span>";
 }
 
 function setStatistics(){

@@ -23,57 +23,17 @@
 		<a class="navbar-brand" href="about.html" id="menu5"></a>
     	</div>
 	    <div class="nav navbar-right" >
-			<a class="navbar-brand"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
-			<a class="navbar-brand"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
+			<a class="navbar-brand flag"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
+			<a class="navbar-brand flag"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
 	    </div>
 	</nav>
-
-<select onchange="changeProcessQuant()" id="processQuant" class="form-control">
-</select>
-
-<div class="row">
-	<div class="col-md-4" id="col1">
-	
-	</div>
-
-	<div class="col-md-4" id="col2">
-	
-	</div>
-
-	<div class="col-md-4" id="col3">
-	
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-4" id="col4">
-	
-	</div>
-
-	<div class="col-md-4" id="col5">
-	
-	</div>
-
-	<div class="col-md-4" id="col6">
-	
-	</div>
-</div>
-
-<button onclick="setAutomatic()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="automatic">
-	<div data-toggle="tooltip" data-placement="top" title="Click to turn automatic mode on" id="gindex_1">
-	</div>
-</button>
-
-<button onclick="setStepByStep()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="stepByStep">
-	<div data-toggle="tooltip" data-placement="top" title="Click to turn step by step mode on" id="gindex_2">
-	</div>
-</button>
 
 <a href="#game.html">
 	<div data-toggle="tooltip" data-placement="top" title="Click when you finish inserting all the data of the processes !">
 		<button onclick="readyBtn()" type="button" class="btn btn-success readyButton" id="gindex_3"></button>
 	</div>
 </a>
+
 <div class="btn-group btn-group-justified preset" role="group" aria-label="...">
 
 			  	<div class="btn-group" role="group">
@@ -94,6 +54,50 @@
 			  		</div>
 			    </div>
 		</div>
+<button onclick="setAutomatic()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="automatic">
+	<div data-toggle="tooltip" data-placement="top" title="Click to turn automatic mode on" id="gindex_1">
+	</div>
+</button>
+
+<button onclick="setStepByStep()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="stepByStep">
+	<div data-toggle="tooltip" data-placement="top" title="Click to turn step by step mode on" id="gindex_2">
+	</div>
+</button>
+
+<select onchange="changeProcessQuant()" id="processQuant" class="form-control processQuantClass">
+</select>
+
+<div class="row">
+	<div class="col-md-6" id="col1">
+	
+	</div>
+
+	<div class="col-md-6" id="col2">
+	
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6" id="col3">
+	
+	</div>
+
+	<div class="col-md-6" id="col4">
+	
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6" id="col5">
+	
+	</div>
+
+	<div class="col-md-6" id="col6">
+
+	</div>
+</div>
+
+
 
 </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

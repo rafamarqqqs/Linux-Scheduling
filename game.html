@@ -24,62 +24,48 @@
 		<a class="navbar-brand" href="about.html" id="menu5"></a>
     	</div>
 	    <div class="nav navbar-right" >
-			<a class="navbar-brand"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
-			<a class="navbar-brand"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
+			<a class="navbar-brand flag"><img width="37px" h eight="25px" onCLick="applyLanguage('en');" src="images/en.jpg" title="English"></a>
+			<a class="navbar-brand flag"><img width="37px" height="25px" onCLick="applyLanguage('pt-BR');" src="images/pt-BR.png" title="Português"></a>
 	    </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       	<ul class="nav navbar-nav">
 
-      	<li>
-	    	<div data-toggle="tooltip" data-placement="top" title="Time consumed" id="counter" class="thumbnail">
-	    		<span class="text-center lead">0</span>
-	    	</div>
-      	</li>
-		<li>
-			<div data-toggle="tooltip" data-placement="top" title="Current event" id="info">
-				<div class="alert alert-info" role="alert" id="game1"></div>
-			</div>
-		</li>
-
-		<li>
-			<button data-toggle="tooltip" data-placement="top" title="Next step" onclick="nextStep()" type="button" class="btn btn-default btn-lg mainButtons" id="nextStep">
-				<span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
-			</button>
-		</li>
-
-		<li>
-			<div data-toggle="tooltip" data-placement="top" title="Events log">
-				<button type="button" class="btn btn-primary btn-lg mainButtons" id="logsButton" data-toggle="modal" data-target="#logModal">
-					Log
-				</button>
-			</div>
-		</li>
-
-		<li>
-			<div data-toggle="tooltip" data-placement="top" title="CPU statistics">
-				<button type="button" class="btn btn-primary btn-lg mainButtons" id="statisticsButton" data-toggle="modal" data-target="#statisticsModal">
-				</button>
-			</div>
-		</li>
-
-		<li>
-			<div data-toggle="tooltip" data-placement="top" title="Help ! (?)">
-				<button type="button" class="btn btn-warning btn-lg mainButtons" id="helpButton" data-toggle="modal" data-target="#helpModal">
-				</button>
-			</div>
-		</li>
 
       	</ul>
 
     </div><!-- /.navbar-collapse -->
 </nav>
+		
+	<div data-toggle="tooltip" data-placement="top" title="Current event" id="info">
+		<div class="alert alert-info" role="alert" id="game1"></div>
+	</div>
+
+	<button data-toggle="tooltip" data-placement="top" title="Next step" onclick="nextStep()" type="button" class="btn btn-default btn-lg mainButtons" id="nextStep">
+		<span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+	</button>
+
+	<div data-toggle="tooltip" data-placement="top" title="Events log">
+		<button type="button" class="btn btn-primary btn-lg mainButtons" id="logsButton" data-toggle="modal" data-target="#logModal">
+			Log
+		</button>
+	</div>
+
+	<div data-toggle="tooltip" data-placement="top" title="CPU statistics">
+		<button type="button" class="btn btn-primary btn-lg mainButtons" id="statisticsButton" data-toggle="modal" data-target="#statisticsModal">
+		</button>
+	</div>
+
+	<div data-toggle="tooltip" data-placement="top" title="Help ! (?)">
+		<button type="button" class="btn btn-warning btn-lg mainButtons" id="helpButton" data-toggle="modal" data-target="#helpModal">
+		</button>
+	</div>
 </div>
 
 
 
-<div class="container">
+<div class="container mainContainer">
 	<div class="row">
 
 	  	<!--EXECUTING AREA-->
