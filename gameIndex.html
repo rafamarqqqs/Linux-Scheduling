@@ -29,7 +29,7 @@
 	</nav>
 
 <a href="#game.html">
-	<div data-toggle="tooltip" data-placement="top" title="Click when you finish inserting all the data of the processes !">
+	<div data-toggle="tooltip" data-placement="top" id="btn_readyGame">
 		<button onclick="readyBtn()" type="button" class="btn btn-success readyButton" id="gindex_3"></button>
 	</div>
 </a>
@@ -37,30 +37,30 @@
 <div class="btn-group btn-group-justified preset" role="group" aria-label="...">
 
 			  	<div class="btn-group" role="group">
-					<div data-toggle="button" data-placement="top" title="Starts a new simulation with random processses">
+					<div data-toggle="button" data-placement="top" id="btn_game1">
 			  			<button onclick="aleatory()" type="button" class="btn btn-primary" id="gindex_4"></button>
 			  		</div>
 			  	</div>
 
 			  	<div class="btn-group" role="group">
-					<div data-toggle="button" data-placement="top" title="Starts a new simulation with CPU bounded processes">
+					<div data-toggle="button" data-placement="top" id="btn_game2">
 			  			<button onclick="cpuBounded()" type="button" class="btn btn-primary" id="gindex_5"></button>
 			  		</div>
 			  	</div>
 
 			  	<div class="btn-group" role="group">
-					<div data-toggle="button" data-placement="top" title="Starts a new simulation with I/O bounded processses">
+					<div data-toggle="button" data-placement="top" id="btn_game3">
 			  			<button onclick="ioBounded()" type="button" class="btn btn-primary" id="gindex_6"></button>
 			  		</div>
 			    </div>
 		</div>
 <button onclick="setAutomatic()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="automatic">
-	<div data-toggle="tooltip" data-placement="top" title="Click to turn automatic mode on" id="gindex_1">
+	<div data-toggle="tooltip" data-placement="top" id="gindex_1">
 	</div>
 </button>
 
 <button onclick="setStepByStep()" type="button" class="btn btn-info btn-lg optionsBtn" data-toggle="button" aria-pressed="false" id="stepByStep">
-	<div data-toggle="tooltip" data-placement="top" title="Click to turn step by step mode on" id="gindex_2">
+	<div data-toggle="tooltip" data-placement="top" id="gindex_2">
 	</div>
 </button>
 

@@ -138,7 +138,7 @@ function getProcessHTMLForm(id){
 						"</select>" +
 				"</div>" +
 				"<div class=\"col-sm-3\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a quantidade de tempo para o processo terminar sua requisição de E/S\" for=\"\"processIOTime_" + id + "\">Tempo de E/S</label>" +
+					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a quantidade de tempo para o processo terminar sua requisição de E/S\" for=\"\"processIOTime_" + id + "\">Tempo E/S</label>" +
 						"<select id=\"processIOTime_" + id + "\" class=\"form-control processTextsIO\">" +
 								"<option>10</option>" +
 								"<option>20</option>" +
@@ -894,9 +894,16 @@ function applyLanguage(langName)
 	localStorage.setItem("language", currentLanguage);
 	for (var prop in langStrings[currentLanguage]) 
 	{
-		if((prop.toString() == "processQuant") || (prop.toString() == "game12") || (prop.toString() == "game11"))
+		if((prop.toString() == "processQuant") || (prop.toString() == "game12") || (prop.toString() == "game11")  || (prop.toString() == "learnMoreTexto")  || (prop.toString() == "instructionsTexto"))
 			$( "#"+prop ).html(langStrings[currentLanguage][prop]);
-		else
-			$( "#"+prop ).text(langStrings[currentLanguage][prop]);
+		else{
+			if ((prop.toString() == "btn_readyGame") || (prop.toString() == "btn_game1") || (prop.toString() == "btn_game2") || (prop.toString() == "btn_game3") || (prop.toString() == "btn_game4") || (prop.toString() == "btn_game5") || (prop.toString() == "info") || (prop.toString() == "nextStep") || (prop.toString() == "stepByStep") || (prop.toString() == "automatic")) {
+				if (document.getElementById(prop.toString()) != null)
+					document.getElementById(prop.toString()).title = langStrings[currentLanguage][prop];
+			}
+			else {
+				$( "#"+prop ).text(langStrings[currentLanguage][prop]);
+			}
+		}
 	}
 }
