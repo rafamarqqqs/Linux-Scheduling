@@ -9,6 +9,8 @@ var processCPUTime = 0;
 var processingTime = 10;
 var ioProcessingTime = 10;
 
+var generator;
+
 var interval;
 
 var executingProcess = null;
@@ -29,17 +31,14 @@ var langStrings = new Object();
 var currentLanguage = "";
 var languageToApply = "";
 
-
-/*
-
-QUANDO UM PROCESSO DE TEMPO REAL DEIXA A CPU ELE VAI PRA ONDE ? EXPIRADO OU READY ?
-
-
-*/
-
 function changeProcessQuant(){
 	var elem = document.getElementById('processQuant');
-	quant = elem.options[elem.selectedIndex].value;
+
+	if(elem.selectedIndex == "-1"){
+		quant = 2;
+	}
+	else
+		quant = elem.options[elem.selectedIndex].value;
 
 	for (var i = 0; i < 6; i++)
 		document.getElementById("col" + (i + 1)).innerHTML = "";
@@ -104,11 +103,6 @@ function getProcessHTMLForm(id){
 						"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
 					"</div>" +
 				"</div>" +
-				"<div class=\"row\">" +
-					"<div class=\"col-md-11\">" +
-						"<input id=\"sliderLeave_" + id + "\" onchange=\"changeProcessLeaveChance(this.id)\" type=\"range\" min=\"0\" max=\"90\" step=\"1\" value=\"30\"/>" +
-					"</div>" +
-				"</div>" +
 			"</div>" +
 		"</div>";
 	}
@@ -162,11 +156,6 @@ function getProcessHTMLForm(id){
 						"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
 					"</div>" +
 				"</div>" +
-				"<div class=\"row\">" +
-					"<div class=\"col-md-11\">" +
-						"<input id=\"sliderLeave_" + id + "\" onchange=\"changeProcessLeaveChance(this.id)\" type=\"range\" min=\"0\" max=\"90\" step=\"1\" value=\"30\"/>" +
-					"</div>" +
-				"</div>" +
 			"</div>" +
 		"</div>";
 	}
@@ -185,13 +174,6 @@ function changeProcessIOChance(id){
 	var n = id.split("_");
 	var v = elem.value;
 	document.getElementById("processIOChance_" + n[1]).innerHTML = v;
-}
-
-function changeProcessLeaveChance(id){
-	var elem = document.getElementById(id);
-	var n = id.split("_");
-	var v = elem.value;
-	document.getElementById("processLeaveChance_" + n[1]).innerHTML = v;
 }
 
 function getFromTextArea(id){	
@@ -236,9 +218,12 @@ function check(){
 function aleatory(){
 	if(check() == -1)
 		return;
+	
+	generator = "Aleatory";
 
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
+	localStorage.setItem("generator", generator);
 
 	var type;
 	var priority;
@@ -259,9 +244,6 @@ function aleatory(){
 
 		localStorage.setItem("processIOTime_" + i, normalize(getRandom(50, 10)));
 		localStorage.setItem("processIOChance_" + i, getRandom(70, 10));
-
-		if(type == 0)
-			localStorage.setItem("processLeaveChance_" + i, getRandom(40, 10));
 	};
 
 	window.location.href = "game.html";
@@ -272,8 +254,10 @@ function ioBounded(){
 	if(check() == -1)
 		return;
 
+	generator = "I/O bounded";
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
+	localStorage.setItem("generator", generator);
 
 	var type;
 	var priority;
@@ -294,9 +278,6 @@ function ioBounded(){
 
 		localStorage.setItem("processIOTime_" + i, normalize(getRandom(50, 30)));
 		localStorage.setItem("processIOChance_" + i, getRandom(70, 50));
-
-		if(type == 0)
-			localStorage.setItem("processLeaveChance_" + i, getRandom(40, 10));
 	};
 
 	window.location.href = "game.html";
@@ -307,8 +288,10 @@ function cpuBounded(){
 	if(check() == -1)
 		return;
 
+	generator = "CPU bounded"
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
+	localStorage.setItem("generator", generator);
 
 	var type;
 	var priority;
@@ -329,9 +312,6 @@ function cpuBounded(){
 
 		localStorage.setItem("processIOTime_" + i, normalize(getRandom(20, 10)));
 		localStorage.setItem("processIOChance_" + i, getRandom(20, 10));
-
-		if(type == 0)
-			localStorage.setItem("processLeaveChance_" + i, getRandom(40, 10));
 	};
 
 	window.location.href = "game.html";
@@ -369,8 +349,10 @@ function readyBtn(){
 	for (var i = 0; i < quant; i++){
 	}
 
+	generator = "Custom";
 	localStorage.setItem("quantity", quant);
 	localStorage.setItem("mode", mode);
+	localStorage.setItem("generator", generator);
 
 	var type;
 
@@ -381,9 +363,6 @@ function readyBtn(){
 		localStorage.setItem("processScheduleType_" + i, type);
 		localStorage.setItem("processIOTime_" + i, get("processIOTime_" + i));
 		localStorage.setItem("processIOChance_" + i, getValueFromSlider("processIOChance_" + i));
-
-		if(type == "FIFO")
-			localStorage.setItem("processLeaveChance_" + i, getValueFromSlider("processLeaveChance_" + i));			
 	};
 
 	window.location.href = "game.html";
@@ -400,12 +379,11 @@ var Process = {
 	ioRemaining: -1,
 	quantum: -1,
 	quantumUsed: -1,
-	leaveChance: -1,
 	type: -1,
 	status: -1,
 };
 
-function addProcess(id, type, priority, time, io, status, quantum, ioTime, ioChance, leaveChance){
+function addProcess(id, type, priority, time, io, status, quantum, ioTime, ioChance){
 	Process = {};
 	processes[processes.length] = Process;
 	processes[processes.length - 1]["id"] = id;
@@ -419,15 +397,14 @@ function addProcess(id, type, priority, time, io, status, quantum, ioTime, ioCha
 	processes[processes.length - 1]["ioTime"] = ioTime;
 	processes[processes.length - 1]["ioRemaining"] = ioTime;
 	processes[processes.length - 1]["status"] = status;
-	processes[processes.length - 1]["leaveChance"] = leaveChance;
 }
 
 function setInfo(info, color){
 	noMove = false;
-	infos++;
+	//infos++;
 
-	setTimeout(function() {
-		infos--;
+//	setTimeout(function() {
+	//	infos--;
 
 		if(color == "primary")
 			document.getElementById('info').innerHTML = "<div class=\"alert bg-primary\" role=\"alert\">" + info + "</div>";
@@ -436,7 +413,7 @@ function setInfo(info, color){
 
 		$("#modalTextArea").append("<span class=\"label label-" + color + "\">" + info + "</span><br>");
 
-	}, infos*1000);
+	//}, infos*1000);
 }
 
 //codigo html que gera a figura do processo (grupo de botoes)
@@ -565,16 +542,6 @@ function checkExecution(){
 			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and is complete.", "success");
 		else
 			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e está completo.", "success");
-		remake = true;
-	}
-	else if(executingProcess["type"] == "FIFO" && getRandom(100, 1) < executingProcess["leaveChance"]){
-		removeProcess("#E_" + executingProcess["id"]);
-		makeProcessReady(executingProcess);
-		executingProcess["quantumUsed"] = 0;
-		if (currentLanguage == "en")
-			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and left the CPU.", "success");
-		else
-			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e deixou a CPU.", "success");
 		remake = true;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"] && executingProcess["type"] != "FIFO"){
@@ -751,6 +718,7 @@ function getProcessQuantum(p){
 function startGame(){
 	quant = localStorage.getItem("quantity");
 	mode = localStorage.getItem("mode");
+	generator = localStorage.getItem("generator");
 
 	for(var i = 0; i < quant; i++){
 		var priority = localStorage.getItem("processPriority_" + i);
@@ -758,14 +726,11 @@ function startGame(){
 		var type = localStorage.getItem("processScheduleType_" + i);
 		var IOTime = localStorage.getItem("processIOTime_" + i);
 		var IOChance = localStorage.getItem("processIOChance_" + i);
-		var leaveChance = type == "FIFO" ? localStorage.getItem("processLeaveChance_" + i) : -1;
 
 		if(IOChance == "")
 			IOChance = 35;
-		if(leaveChance == "")
-			leaveChance = 30;
 
-		addProcess(i, type, priority, time, 0, "ready", getProcessQuantum(priority), IOTime, IOChance, leaveChance);
+		addProcess(i, type, priority, time, 0, "ready", getProcessQuantum(priority), IOTime, IOChance);
 	}
 
 	for (var i = 0; i < quant; i++) {
@@ -775,6 +740,13 @@ function startGame(){
 
 	if(mode == "automatic")
 		doAutomatic();
+
+	setInformations();
+}
+
+function setInformations(){
+	document.getElementById("mode").innerHTML = mode == "automatic" ? "Automatic" : "Step by step";
+	document.getElementById("generator").innerHTML = generator;
 }
 
 function doAutomatic(){
@@ -856,6 +828,34 @@ function setAutomatic(){
 
 function setStepByStep(){
 	mode = "stepByStep";
+}
+
+function restart(){
+	processes = [];
+	overallProcessingTime = 0;
+	overallIOTime = 0;
+	overallTime = 0;
+	idleTime = 0;
+	processCPUTime = 0;
+	processingTime = 10;
+	ioProcessingTime = 10;
+	executingProcess = null;
+	steps = 0;
+	quant = 0;
+	mode = null;
+	noMove = true;
+	nextStepCounter = 1;
+	infos = 0;
+	end = false;
+	blocked = 0;
+	ready = quant;
+
+	document.getElementById("exec").innerHTML = "";
+	document.getElementById("blocked").innerHTML = "";
+	document.getElementById("ready").innerHTML = "";
+	document.getElementById("expired").innerHTML = "";
+	
+	startGame();
 }
 //------------------------------------------FUNCTIONS OF LANGUAGE-------------------------------------------
 function onLoadLanguage()

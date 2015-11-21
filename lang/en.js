@@ -12,7 +12,7 @@ langStrings["en"].index_btn1 = "Start";
 langStrings["en"].index_btn2 = "Instructions";
 langStrings["en"].index_btn3 = "Learn more";
 langStrings["en"].index_btn4 = "About";
-langStrings["en"].processQuant = "<option disabled selected>Select the amount of processes</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>";
+langStrings["en"].processQuant = "<option disabled>Select the amount of processes</option><option value=\"1\">1</option><option value=\"2\" selected=\"selected\">2</option><option value=\"3\">3</option><option value=\"4\">4</option><option value=\"5\">5</option><option value=\"6\">6</option>";
 langStrings["en"].gindex_1 = "Automatic";
 langStrings["en"].gindex_2 = "Step By Step";
 langStrings["en"].gindex_3 = "Ready";

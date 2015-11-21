@@ -28,11 +28,9 @@
 	    </div>
 	</nav>
 
-<a href="#game.html">
 	<div data-toggle="tooltip" data-placement="top" id="btn_readyGame">
 		<button onclick="readyBtn()" type="button" class="btn btn-success readyButton" id="gindex_3"></button>
 	</div>
-</a>
 
 <div class="btn-group btn-group-justified preset" role="group" aria-label="...">
 
@@ -64,8 +62,7 @@
 	</div>
 </button>
 
-<select onchange="changeProcessQuant()" id="processQuant" class="form-control processQuantClass">
-</select>
+<select onchange="changeProcessQuant()" id="processQuant" class="form-control processQuantClass"></select>
 
 <div class="row">
 	<div class="col-md-6" id="col1">
@@ -109,7 +106,15 @@
     <script type="text/javascript">
     	window.onLoad = loadLanguage('en');
     	window.onLoad = loadLanguage('pt-BR');
-    </script>
+	</script>
+
+<script type="text/javascript">
+		
+	$(document).ready(function() {
+		changeProcessQuant();
+	});
+
+</script>
 
 </body>
 
