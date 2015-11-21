@@ -33,7 +33,7 @@ var languageToApply = "";
 
 function changeProcessQuant(){
 	var elem = document.getElementById('processQuant');
-
+	console.log(langStrings);
 	if(elem.selectedIndex == "-1"){
 		quant = 2;
 	}
@@ -59,7 +59,7 @@ function getProcessHTMLForm(id){
 			"<div class=\"row\">" +
 			"<div class=\"col-sm-3\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process\" for=\"processPriority\">Priority</label>" +
-						"<textarea style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+						"<textarea onchange=\"remakeType(" + id + ")\" style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the amount of time necessary to complete the process\" for=\"processTime\">Time</label>" +
@@ -73,9 +73,8 @@ function getProcessHTMLForm(id){
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the schedule type of the process\" for=\"processScheduleType_\">Type</label>" +
-						"<select id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
-								"<option>FIFO</option>" +
-								"<option>Round Robin</option>" +
+						"<select style=\"width: 110px\" disabled id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
+
 						"</select>" +
 				"</div>" +
 				"<div class=\"col-sm-3\">" +
@@ -89,20 +88,15 @@ function getProcessHTMLForm(id){
 							"</select>" +
 					"</div>" +
 			"</div>" +
+
 		"<div class=\"row\">" +
 			"<div class=\"col-sm-6\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines a chance for the process to require I/O data\" for=\"processIOChance\">I/O chance</label>" +
-						"<textarea style=\"resize:none\" readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
-					"</div>" +
-			"<div class=\"col-sm-6\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines a chance for the FIFO process to leave the CPU\" for=\"processLeaveChance_" + id + "\">Leave chance</label>" +
-						"<textarea style=\"resize:none\" readonly id=\"processLeaveChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
-					"</div>" +
-				"<div class=\"row\">" +
-					"<div class=\"col-md-11\">" +
-						"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
-					"</div>" +
+				"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines a chance for the process to require I/O data\" for=\"processIOChance\">I/O chance</label>" +
+					"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
 				"</div>" +
+			"<div class=\"col-sm-6\">" +
+				"<textarea style=\"resize:none; margin-top: 10px\" readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+			"</div>" +
 			"</div>" +
 		"</div>";
 	}
@@ -112,7 +106,7 @@ function getProcessHTMLForm(id){
 			"<div class=\"row\">" +
 			"<div class=\"col-sm-3\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a prioridade do processo\" for=\"processPriority\">Prioridade</label>" +
-						"<textarea style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+						"<textarea onchange=\"remakeType(" + id + ")\" style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
 					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a quantidade de tempo necessária para completar o processo\" for=\"processTime\">Tempo</label>" +
@@ -126,9 +120,8 @@ function getProcessHTMLForm(id){
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
 					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina o tipo de escalonamento do processo\" for=\"processScheduleType_\">Tipo</label>" +
-						"<select id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
-								"<option>FIFO</option>" +
-								"<option>Round Robin</option>" +
+						"<select style=\"width: 110px\" disabled id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
+
 						"</select>" +
 				"</div>" +
 				"<div class=\"col-sm-3\">" +
@@ -144,20 +137,27 @@ function getProcessHTMLForm(id){
 			"</div>" +
 		"<div class=\"row\">" +
 			"<div class=\"col-sm-6\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a chance do processo requisitar uma dado de E/S\" for=\"processIOChance\">Chace de E/S</label>" +
-						"<textarea style=\"resize:none\" readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
-					"</div>" +
-			"<div class=\"col-sm-6\">" +
-					"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a chance do processo FIFO deixar a CPU\" for=\"processLeaveChance_" + id + "\">Chance de deixar a CPU</label>" +
-						"<textarea style=\"resize:none\" readonly id=\"processLeaveChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
-					"</div>" +
-				"<div class=\"row\">" +
-					"<div class=\"col-md-11\">" +
-						"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
-					"</div>" +
+				"<label data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a chance do processo requisitar uma dado de E/S\" for=\"processIOChance\">Chance de E/S</label>" +
+					"<input id=\"sliderIO_" + id + "\" onchange=\"changeProcessIOChance(this.id)\" type=\"range\" min=\"0\" max=\"70\" step=\"1\" value=\"40\"/>" +
 				"</div>" +
+			"<div class=\"col-sm-6\">" +
+				"<textarea style=\"resize:none; margin-top: 10px\" readonly id=\"processIOChance_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
+			"</div>" +
 			"</div>" +
 		"</div>";
+	}
+}
+
+function remakeType(id){
+	elem = document.getElementById('processScheduleType_' + id);
+
+	if(document.getElementById('processPriority_' + id).value > 100){
+		elem.innerHTML = "<option>TS</option>";
+		elem.setAttribute("disabled", "disabled");
+	}
+	else{
+		elem.innerHTML = "<option>RT FIFO</option><option>RT RR</option>";
+		elem.removeAttribute("disabled");
 	}
 }
 
@@ -742,6 +742,7 @@ function startGame(){
 		doAutomatic();
 
 	setInformations();
+	setStatistics();
 }
 
 function setInformations(){
@@ -811,12 +812,12 @@ function setStatistics(){
 	if (currentLanguage == "en"){
 		var iT = "Idle time: " + idleTime + "ms. <br>";
 		var uT = "Used time: " + overallProcessingTime + "ms. <br>";
-		var cpuUsage = "CPU usage: " + (((overallTime - idleTime)/overallTime)*100).toFixed(2) + "%. <br>";
+		var cpuUsage = "CPU usage: " + (overallTime == 0 ? 0 : (((overallTime - idleTime)/overallTime)*100).toFixed(2)) + "%. <br>";
 	}
 	else {
 		var iT = "Tempo ocioso: " + idleTime + "ms. <br>";
 		var uT = "Tempo de uso: " + overallProcessingTime + "ms. <br>";
-		var cpuUsage = "Uso de CPU: " + (((overallTime - idleTime)/overallTime)*100).toFixed(2) + "%. <br>";
+		var cpuUsage = "Uso de CPU: " + (overallTime == 0 ? 0 : (((overallTime - idleTime)/overallTime)*100).toFixed(2)) + "%. <br>";
 	}
 
 	stat.innerHTML = iT + uT + cpuUsage;
@@ -855,6 +856,8 @@ function restart(){
 	document.getElementById("ready").innerHTML = "";
 	document.getElementById("expired").innerHTML = "";
 	
+	setInfo("Starting scheduling...", "info");
+
 	startGame();
 }
 //------------------------------------------FUNCTIONS OF LANGUAGE-------------------------------------------
@@ -883,7 +886,7 @@ function loadLanguage(langName)
 	script.onreadystatechange = onLoadLanguage;
 	script.onload = onLoadLanguage;
 	
-	currentLanguage = langName;	
+	currentLanguage = langName;
     head.appendChild(script);
 }
 
