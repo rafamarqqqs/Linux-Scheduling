@@ -379,6 +379,7 @@ var Process = {
 	ioRemaining: -1,
 	quantum: -1,
 	quantumUsed: -1,
+	classification: -1,
 	type: -1,
 	status: -1,
 };
@@ -397,6 +398,12 @@ function addProcess(id, type, priority, time, io, status, quantum, ioTime, ioCha
 	processes[processes.length - 1]["ioTime"] = ioTime;
 	processes[processes.length - 1]["ioRemaining"] = ioTime;
 	processes[processes.length - 1]["status"] = status;
+
+	if(priority < 100){
+		processes[processes.length - 1]["classification"] = "RT";
+	}
+	else
+		processes[processes.length - 1]["classification"] = "TS";
 }
 
 function setInfo(info, color){
@@ -423,6 +430,7 @@ function getProcessHTMLBlock(block, n){
 			   "<div class=\"list-group-item  processBg2\">" + 
 			"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
 			"<span id=\"time_" + n + "\"class=\"label label-primary\">Time: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
+		"<span class=\"label label-warning\">Type: " + processes[n]["classification"] + "   </span>" +
 		"</div>" + 
 		"<div class=\"list-group-item  processBg3\">" +
 			"<span class=\"label label-info\">Priority: " + processes[n]["priority"] + "   </span>" +
@@ -434,6 +442,7 @@ function getProcessHTMLBlock(block, n){
 		   "<div class=\"list-group-item  processBg2\">" + 
 		"<span class=\"label label-success\">ID: " + processes[n]["id"] + "   </span>" +
 		"<span id=\"time_" + n + "\"class=\"label label-primary\">Tempo: "+(processes[n]["type"] == "FIFO" ? "FIFO" : processes[n]["quantumUsed"] +"/" +processes[n]["quantum"])+" | "+ (processes[n]["time"] < 0 ? 0 : processes[n]["time"]) + "</span>" +
+		"<span class=\"label label-warning\">Tipo: " + processes[n]["classification"] + "   </span>" +
 		"</div>" + 
 		"<div class=\"list-group-item  processBg3\">" +
 		"<span class=\"label label-info\">Prioridade: " + processes[n]["priority"] + "   </span>" +
