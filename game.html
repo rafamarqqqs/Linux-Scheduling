@@ -39,7 +39,7 @@
 		<span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
 	</button>
 
-	<div data-toggle="tooltip" data-placement="top" title="Events log">
+	<div data-toggle="tooltip" data-placement="top" id="btn_game7">
 		<button type="button" class="btn btn-primary btn-lg mainButtons" id="logsButton" data-toggle="modal" data-target="#logModal">
 			Log
 		</button>
@@ -50,8 +50,8 @@
 		</button>
 	</div>
 
-	<div data-toggle="tooltip" data-placement="top">
-		<button type="button" class="btn btn-primary btn-lg mainButtons" id="restartButton" onclick="restart()"> Restart </button>
+	<div data-toggle="tooltip" data-placement="top" id="btn_game6">
+		<button type="button" class="btn btn-primary btn-lg mainButtons" id="restartButton" onclick="restart()"></button>
 	</div>
 
 	<div data-toggle="tooltip" data-placement="top" id="btn_game5">
@@ -203,7 +203,8 @@
     <script type="text/javascript">
     	window.onLoad = loadLanguage('en');
     	window.onLoad = loadLanguage('pt-BR');
-    	window.onLoad = startGame();
+	currentLanguage = localStorage.getItem("language");
+	$( document ).ready(startGame());
     </script>
 
 </body>

@@ -58,7 +58,7 @@ function getProcessHTMLForm(id){
 		return "<div class=\"well well-sm processWell\">" +
 			"<div class=\"row\">" +
 			"<div class=\"col-sm-3\">" +
-					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process\" for=\"processPriority\">Priority</label>" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the priority of the process. \n\n Use 0 to 99 for Real Time processes (RT). In this case, you must choose the scheduling type: \n \t -FIFO (RT FIFO); \n \t -Round Robin (RT RR).\n\n Use 100 to 139 for Time-shared processes (TS). You don't need to define a scheduling type in this case because the process can only be Round Robin. \" for=\"processPriority\">Priority (?)</label>" +
 						"<textarea onchange=\"remakeType(" + id + ")\" style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
@@ -72,7 +72,7 @@ function getProcessHTMLForm(id){
 							"</select>" +
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
-					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the schedule type of the process\" for=\"processScheduleType_\">Type</label>" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defines the schedule type of the process (if you chose a priority between 0 and 99): \n \t -FIFO (RT FIFO)\n \t -Round-Robin (RT RR)\" for=\"processScheduleType_\">Type</label>" +
 						"<select style=\"width: 110px\" disabled id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
 
 						"</select>" +
@@ -105,7 +105,7 @@ function getProcessHTMLForm(id){
 	return "<div class=\"well well-sm processWell\">" +
 			"<div class=\"row\">" +
 			"<div class=\"col-sm-3\">" +
-					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a prioridade do processo\" for=\"processPriority\">Prioridade</label>" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina a prioridade do processo \n\n Use 0 a 99 para processos de Tempo Real (RT). Neste caso, você deve escolher o tipo de escalonamento: \n \t -FIFO (RT FIFO); \n \t -Round Robin (RT RR).\n\n Use 100 a 139 para processos de Tempo Compartilhado (TS). Você não precisa definir um tipo de escalonamento neste caso porque o processo só pode ser do tipo Round Robin. \" for=\"processPriority\">Prioridade (?)</label>" +
 						"<textarea onchange=\"remakeType(" + id + ")\" style=\"resize:none\" id=\"processPriority_" + id + "\"class=\"form-control\" rows=\"1\" cols=\"1\"></textarea>" +
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
@@ -119,7 +119,7 @@ function getProcessHTMLForm(id){
 							"</select>" +
 					"</div>" +
 				"<div class=\"col-sm-3\">" +
-					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina o tipo de escalonamento do processo\" for=\"processScheduleType_\">Tipo</label>" +
+					"<label  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Defina o tipo de escalonamento do processo (se você escolheu prioridade entre 0 e 99): \n \t -FIFO (RT FIFO)\n \t -Round-Robin (RT RR)\" for=\"processScheduleType_\">Tipo</label>" +
 						"<select style=\"width: 110px\" disabled id=\"processScheduleType_" + id + "\" class=\"form-control processTexts\">" +
 
 						"</select>" +
@@ -550,7 +550,7 @@ function checkExecution(){
 		if (currentLanguage == "en")
 			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and is complete.", "success");
 		else
-			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e está completo.", "success");
+			setInfo("Processo " + executingProcess["id"] + " executado por " + processCPUTime + "ms, e está completo.", "success");
 		remake = true;
 	}
 	else if(executingProcess["quantum"] == executingProcess["quantumUsed"] && executingProcess["type"] != "FIFO"){
@@ -560,14 +560,14 @@ function checkExecution(){
 		if (currentLanguage == "en")
 			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms, and expired.", "success");
 		else
-			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms, e foi expirado.", "success");
+			setInfo("Processo " + executingProcess["id"] + " executado por " + processCPUTime + "ms, e foi expirado.", "success");
 		remake = true;
 	}
 	else{
 		if (currentLanguage == "en")
 			setInfo("Process " + executingProcess["id"] + " executed for " + processCPUTime + "ms.", "success");
 		else
-			setInfo("Processo " + executingProcess["id"] + " executado em " + processCPUTime + "ms.", "success");
+			setInfo("Processo " + executingProcess["id"] + " executado por " + processCPUTime + "ms.", "success");
 	}
 
 
@@ -755,8 +755,20 @@ function startGame(){
 }
 
 function setInformations(){
-	document.getElementById("mode").innerHTML = mode == "automatic" ? "Automatic" : "Step by step";
-	document.getElementById("generator").innerHTML = generator;
+	if (currentLanguage == "en") {
+		document.getElementById("mode").innerHTML = mode == "automatic" ? "Automatic" : "Step by step";
+		document.getElementById("generator").innerHTML = generator;
+	}
+	else {
+		document.getElementById("mode").innerHTML = mode == "automatic" ? "Automático" : "Passo a passo";
+		if (generator == "Aleatory")		
+			document.getElementById("generator").innerHTML = "Aleatório";
+		else if (generator == "Custom")		
+			document.getElementById("generator").innerHTML = "Constomizada";
+		else {
+			document.getElementById("generator").innerHTML = generator;
+		}
+	}
 }
 
 function doAutomatic(){
@@ -894,7 +906,6 @@ function loadLanguage(langName)
     script.src = "lang/"+langName+".js";
 	script.onreadystatechange = onLoadLanguage;
 	script.onload = onLoadLanguage;
-	
 	currentLanguage = langName;
     head.appendChild(script);
 }
@@ -909,7 +920,7 @@ function applyLanguage(langName)
 		if((prop.toString() == "processQuant") || (prop.toString() == "game12") || (prop.toString() == "game11")  || (prop.toString() == "learnMoreTexto")  || (prop.toString() == "instructionsTexto"))
 			$( "#"+prop ).html(langStrings[currentLanguage][prop]);
 		else{
-			if ((prop.toString() == "btn_readyGame") || (prop.toString() == "btn_game1") || (prop.toString() == "btn_game2") || (prop.toString() == "btn_game3") || (prop.toString() == "btn_game4") || (prop.toString() == "btn_game5") || (prop.toString() == "info") || (prop.toString() == "nextStep") || (prop.toString() == "stepByStep") || (prop.toString() == "automatic")) {
+			if ((prop.toString() == "btn_readyGame") || (prop.toString() == "btn_game1") || (prop.toString() == "btn_game2") || (prop.toString() == "btn_game3") || (prop.toString() == "btn_game4") || (prop.toString() == "btn_game5") || (prop.toString() == "btn_game6") || (prop.toString() == "btn_game7") || (prop.toString() == "info") || (prop.toString() == "nextStep") || (prop.toString() == "stepByStep") || (prop.toString() == "automatic")) {
 				if (document.getElementById(prop.toString()) != null)
 					document.getElementById(prop.toString()).title = langStrings[currentLanguage][prop];
 			}

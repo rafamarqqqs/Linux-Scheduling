@@ -106,11 +106,13 @@
     <script type="text/javascript">
     	window.onLoad = loadLanguage('en');
     	window.onLoad = loadLanguage('pt-BR');
-	</script>
+	
+    </script>
 
 <script type="text/javascript">
 		
 	$(document).ready(function() {
+		currentLanguage = localStorage.getItem("language");
 		changeProcessQuant();
 	});
 
